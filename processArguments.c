@@ -37,7 +37,7 @@ char *getUser(int argc, char *argv[])
 
 //deoarece pot avea --user sau nu (din exemple)
 //trebe sa verific cu --comanda deoarece nu am o piztie fixa
-Command_t getCommand(int argc, char *argv[])
+Operation_t getOperation(int argc, char *argv[])
 {
     for(int i = 1; i < argc; i++)
     {   
@@ -77,7 +77,7 @@ int validateArguments(int argc, char *argv[])
         return 0;
     }
 
-    if(getCommand(argc, argv) == no_command)
+    if(getOperation(argc, argv) == no_command)
     {
         printf("command is missing or does not hace --command\n");
         return 0;

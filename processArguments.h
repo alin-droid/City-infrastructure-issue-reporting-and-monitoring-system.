@@ -23,11 +23,15 @@ typedef enum
     remove_report,
     filter,
     update_threshold
-} Command_t;
+} Operation_t;
 
+//gettere pt info din argumente
 Role_t getRole(int argc, char *argv[]);
-Command_t getCommand(int argc, char *argv[]);
+Operation_t getOperation(int argc, char *argv[]);
+char *getUser(int argc, char *argv[]);
 char *getDistrict(int argc, char *argv[]);
+
+
 int validateArguments(int argc, char *argv[]);
 
 #endif
