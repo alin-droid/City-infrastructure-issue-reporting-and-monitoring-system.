@@ -6,8 +6,22 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include<time.h>
+#include "permissions.h"
 
+#define SIZE_NAME 10000
+#define SIZE_CATEGORY_ISSUE 100
+#define SIZE_LENGTH_DESCRIPTION 100000
 // -1 nu e ok 1 facut deja 0 ok !!!!!!! nu uita
+
+struct content{
+   int reportID;
+   char inspectorName[SIZE_NAME];
+   float latitude,longitude;
+   char issue[SIZE_CATEGORY_ISSUE];
+   time_t time;
+   char description[SIZE_LENGTH_DESCRIPTION];
+};
 
 
 // dacă un director există la calea specificată.
@@ -117,14 +131,11 @@ int createFile(char *dirPath, char *fileName)
 int createFileWithPermission(char *dirPath, char *fileName, mode_t perm)
 {  
     //verific daca s-a creat
-   if(createFile(dirPath, fileName) < 0)
-   {
-      printf("cannot create %s!", fileName);
-      return -1;
-   }
+     createFile(dirPath, fileName);
+
+   
    //modific cu permisiunea specifica
-   else
-   {
+
       char *filePath = findFilePath(dirPath, fileName);
 
       if(filePath ==NULL)
@@ -140,7 +151,64 @@ int createFileWithPermission(char *dirPath, char *fileName, mode_t perm)
       // printf("am schimbat permisiunea!");
 
       free(filePath);
-   }
-
    return 0;
+}
+
+
+ ReportContent_t  *createContent(char *inspectorName,float latitude,float longitude,char *issue,char *description){
+
+    ReportContent_t *content=malloc(sizeof(ReportContent_t));
+    if(content==NULL){
+      fprintf(stderr,"memory cannot be alocated!\n");
+      exit(-1);
+    }
+    strcpy(content->inspectorName,inspectorName);
+    content->latitude=latitude;
+    content->longitude=longitude;
+    strcpy(content->issue,issue);
+    content->time=time(NULL);
+    strcpy(content->description,description);
+    return content;
+}
+
+//char *inspectorName,float latitude,float longitude,char *issue,char *description
+
+int addNewReport(Role_t role,ReportContent_t *content,char *dirPath,char *fileName){
+
+   if(fileExists(dirPath)){
+      createFileWithPermission(dirPath, fileName,664);
+   }
+   
+   char *filePath=findFilePath(dirPath,fileName);
+   
+   checkPermissions(role,filePath,fileName);
+
+   FILE *f=fopen(fileName,"ab");
+   if(f==NULL){
+      fprintf(stderr,"cannot open file %s\n",fileName);
+      return -1;
+   }
+   
+
+   int len = strlen(content->inspectorName);
+    fwrite(&len, sizeof(int), 1, f);
+    fwrite(content->inspectorName, sizeof(char), len, f);
+
+   
+    fwrite(&content->latitude, sizeof(float), 1, f);
+    fwrite(&content->longitude, sizeof(float), 1, f);
+
+   
+    len = strlen(content->issue);
+    fwrite(&len, sizeof(int), 1, f);
+    fwrite(content->issue, sizeof(char), len, f);
+
+    
+    fwrite(&content->time, sizeof(time_t), 1, f);
+
+
+    len = strlen(content->description);
+    fwrite(&len, sizeof(int), 1, f);
+    fwrite(content->description, sizeof(char), len, f);
+    return 0;
 }

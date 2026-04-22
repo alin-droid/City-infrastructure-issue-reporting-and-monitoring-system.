@@ -7,76 +7,106 @@
 
 #define MAX_FILE_NAME_LENGTH 100
 #define MAX_NUM_OF_FILES 3
-#define MAX_FILE_PATH_LENGTH 1000000
+#define MAX_FILE_PATH_LENGTH 1024
 
-char fileNames[MAX_NUM_OF_FILES][MAX_FILE_NAME_LENGTH]={"reports.dat","district.cfg","logged_district"};
+char fileNames[MAX_NUM_OF_FILES][MAX_FILE_NAME_LENGTH] = {"reports.dat","district.cfg","logged_district"};
 
+ReportContent_t *readContentFromFile(const char *filename) {
+    FILE *f = fopen(filename, "r");
+    if (f == NULL) {
+        perror("Eroare la deschiderea fisierului");
+        return NULL;
+    }
+
+    char inspectorName[100];
+    float latitude, longitude;
+    char issue[100];
+    char description[256];
+
+    if (fgets(inspectorName, sizeof(inspectorName), f) == NULL) {
+        fclose(f);
+        return NULL;
+    }
+    inspectorName[strcspn(inspectorName, "\n")] = 0;
+
+    if (fscanf(f, "%f %f\n", &latitude, &longitude) != 2) {
+        fclose(f);
+        return NULL;
+    }
+
+    if (fgets(issue, sizeof(issue), f) == NULL) {
+        fclose(f);
+        return NULL;
+    }
+    issue[strcspn(issue, "\n")] = 0;
+
+    if (fgets(description, sizeof(description), f) == NULL) {
+        fclose(f);
+        return NULL;
+    }
+    description[strcspn(description, "\n")] = 0;
+
+    fclose(f);
+
+    return createContent(inspectorName, latitude, longitude, issue, description);
+}
 
 int main(int argc, char *argv[])
 {
-    if(validateArguments(argc, argv) == 0){
+    if (validateArguments(argc, argv) == 0) {
+        printf("Invalid arguments! Please try again.\n");
         return 1;
     }
-    
-    //iau numele distrctului 
+
+    Operation_t op = getOperation(argc, argv);
+    Role_t role = getRole(argc, argv);
+
     char *district = getDistrict(argc, argv);
-    
-    //creez calea pt folder
     char *dirPath = findDirPath(district);
-    //printf("%s",dirPath)
- 
-    if(dirPath == NULL){
-        printf("error creating path\n");
+
+    if (dirPath == NULL) {
+        printf("Error creating path\n");
         return 1;
     }
-   
-    //construiesc folder-ul 
-    if(createDir(dirPath)==1){
-        printf("the directory is already created!\n");
+
+    switch (op) {
+
+        case add: {
+            if (createDir(dirPath) == 1) {
+                printf("Directory already exists!\n");
+            }
+
+            createFileWithPermission(dirPath, fileNames[0], 0664);
+            createFileWithPermission(dirPath, fileNames[1], 0640);
+            createFileWithPermission(dirPath, fileNames[2], 0644);
+ 
+            ReportContent_t *content = readContentFromFile("datePtRaports.txt");
+            addNewReport(role, content, dirPath, fileNames[0]);
+            break;
+        }
+
+        case list: {
+            char filePaths[MAX_NUM_OF_FILES][MAX_FILE_PATH_LENGTH];
+
+            for (int i = 0; i < MAX_NUM_OF_FILES; i++) {
+                char *path = findFilePath(dirPath, fileNames[i]);
+
+                if (path == NULL) {
+                    printf("Error generating file path for %s\n", fileNames[i]);
+                    continue;
+                }
+
+                strcpy(filePaths[i], path);
+            
+                printf("%s\n", filePaths[i]);
+            }
+            break;
+        }
+
+        default:
+            printf("Unknown operation\n");
+            break;
     }
-
-
-    //creez fisierle pt folder cu permisiunile specificate
-    createFileWithPermission(dirPath, fileNames[0], 0664);
-    createFileWithPermission(dirPath, fileNames[1], 0640);
-    createFileWithPermission(dirPath, fileNames[2], 0644);
-    
-    //fac vectori cu calea catre fisier ca sa mi fie mai usor la verificari
-    char filePaths[MAX_NUM_OF_FILES][MAX_FILE_PATH_LENGTH];
-    for(int i=0;i<MAX_NUM_OF_FILES;i++){
-
-       if(strcpy(filePaths[i],findFilePath(dirPath,fileNames[i]))==NULL){
-          printf("Cannot add the filepath because it s too long");
-       }
-
-    }
-    /*for(int i=0;i<MAX_NUM_OF_FILES;i++){
-        printf("%s\n",filePaths[i]);
-    }
-    free(dirPath);*/
-    
-    /*test checkPermissions
-    Role_t role=getRole(argc,argv);
-
-    for(int i=0;i<MAX_NUM_OF_FILES;i++){
-    checkPermissions(role,filePaths[i],fileNames[i]);
-    }
-    */
-    
-    /*test printPermissions
-    
-    for(int i=0;i<MAX_NUM_OF_FILES;i++){
-         printPermissionsForFile(filePaths[i]);
-    }
-    */
-    Operation_t op=getOperation(argc,argv);
-
-    switch(op){
-        case list: printPermissionsForFile(filePaths[0],fileNames[0]);
-                     break;
-        default: break;
-    }
-
 
     return 0;
 }

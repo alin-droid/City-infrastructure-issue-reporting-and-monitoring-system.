@@ -1,0 +1,20 @@
+1
+Ion Popescu
+45.7489 21.2087
+Drum deteriorat
+1713772800
+Gropi mari pe carosabil, necesită reparații urgente.
+
+2
+Maria Ionescu
+45.7550 21.2300
+Iluminat defect
+1713859200
+Stâlpi de iluminat nefuncționali pe strada principală.
+
+3
+Andrei Georgescu
+45.7605 21.2154
+Gunoi menajer
+1713945600
+Containere pline și gunoi împrăștiat în jur.
