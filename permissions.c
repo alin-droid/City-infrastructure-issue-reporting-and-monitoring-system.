@@ -62,6 +62,7 @@ void printPermissionsForFile(char *filePath,char *fileName){
     if(stat(filePath, &sb) != 0)
     {
         printf("Cannot print permissions!\n");
+        exit(-1);
     }
     
     //  owner 

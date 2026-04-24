@@ -153,6 +153,9 @@ int createFileWithPermission(char *dirPath, char *fileName, mode_t perm)
    //modific cu permisiunea specifica
 
 
+
+
+   //FUNCTIILE PT REPORTS.DAT
  ReportContent_t  *createContent(int reportID,char *inspectorName,float latitude,float longitude,char *issue,char *description){
 
     ReportContent_t *content=malloc(sizeof(ReportContent_t));
@@ -170,20 +173,22 @@ int createFileWithPermission(char *dirPath, char *fileName, mode_t perm)
     return content;
 }
 
+
 //char *inspectorName,float latitude,float longitude,char *issue,char *description
 
 int addNewReport(Role_t role, ReportContent_t *content, char *dirPath, char *fileName)
-{
+{   
+   //creez fisierul si fac check la permisiuni
     if(content == NULL)
         return -1;
 
     char *filePath = findFilePath(dirPath, fileName);
-
+   
     if(filePath == NULL)
         return -1;
-
+ 
     checkPermissions(role, filePath, fileName);
-
+    //daca am permisiunea fac adaugarea
     FILE *f = fopen(filePath, "ab");
 
     if(f == NULL)
@@ -192,28 +197,149 @@ int addNewReport(Role_t role, ReportContent_t *content, char *dirPath, char *fil
         free(filePath);
         return -1;
     }
-
-    fwrite(&content->reportID, sizeof(int), 1, f);
-
-    int len = strlen(content->inspectorName);
-    fwrite(&len, sizeof(int), 1, f);
-    fwrite(content->inspectorName, sizeof(char), len+1, f);
-
-    fwrite(&content->latitude, sizeof(float), 1, f);
-    fwrite(&content->longitude, sizeof(float), 1, f);
-
-    len = strlen(content->issue);
-    fwrite(&len, sizeof(int), 1, f);
-    fwrite(content->issue, sizeof(char), len+1, f);
-
-    fwrite(&content->time, sizeof(time_t), 1, f);
-
-    len = strlen(content->description);
-    fwrite(&len, sizeof(int), 1, f);
-    fwrite(content->description, sizeof(char), len+1, f);
+    
+    //scriu in fisierul binar
+    //note to self dai string nume_fisier ca sa vezi ca e adaugat ce trebuie 
+    fwrite(content, sizeof(ReportContent_t), 1, f);
 
     fclose(f);
     free(filePath);
 
     return 0;
+}
+
+
+void printReports(char *filePath)
+{  
+    FILE *f = fopen(filePath, "rb");
+
+    if (f == NULL)
+    {
+        perror("Cannot open file");
+        return;
+    }
+   
+    //strucuta in care voi citi contentul actual
+    struct content raport;
+    size_t bytesRead;
+    int found = 0;
+
+    rewind(f);
+    
+    //contentul trebuie pus intr-un fisier binar deci e important sa aiba numar fix de octeti alocati
+    //se vede si in diagrama din documentatie ca altfel se poate duce la alte eroare (MAI ALES LA LIST :) )
+
+    //dupa ce citesc din fisierul reports.dat afisez in consola
+    while ((bytesRead = fread(&raport, 1, sizeof(struct content), f)) > 0)
+    {
+        if (bytesRead < sizeof(struct content))
+        {
+            break;   
+        }
+
+        found = 1;
+
+        printf("ID: %d ", raport.reportID);
+        printf("Inspector: %s ", raport.inspectorName);
+        printf("Issue: %s ", raport.issue);
+        printf("Coords: %.2f %.2f\n", raport.latitude, raport.longitude);
+    }
+
+    if (!found)
+    {
+        printf("No reports found.\n");
+    }
+
+    fclose(f);
+}
+
+//aici am avut batai de cap si pot spune ca implementarea cu encapsulare poate nu e the best cand vine vorba de a scris cod rapd:) 
+//+ era bine sa mi fac o arhitectura de la inceput ca sa stiu clar anumite functii noroc ciu erorile nenumarate
+
+//a trebuit sa o fac aici ca sa am aces la campul reportId 
+//acum ma gandesc ca puteam sa si un getter dar totusi cred ca isi are locul mai degraba aici
+
+int reportIdExists(char *filePath, int searchedID)
+{
+    FILE *f = fopen(filePath, "rb");
+
+    if(f == NULL)
+        return 0;
+
+    ReportContent_t raport;
+
+    while(fread(&raport, sizeof(ReportContent_t), 1, f) == 1)
+    {
+        if(raport.reportID == searchedID)
+        {
+            fclose(f);
+            return 1;
+        }
+    }
+
+    fclose(f);
+    return 0;
+}
+
+
+//FUNCTII PT CONFIG
+
+void addThresholdInConfig(char *filePath, char *thresholdValue)
+{
+    FILE *f = fopen(filePath, "r");
+
+    if(f != NULL)
+    {   //pt a nu resvrie thresholValue de fiecare data 
+        fseek(f, 0, SEEK_END);
+
+        if(ftell(f) > 0)
+        {
+            fclose(f);
+            return;
+        }
+
+        fclose(f);
+    }
+
+    f = fopen(filePath, "w");
+
+    if(f == NULL)
+        return;
+
+    fprintf(f, "severity_threshold=%s\n", thresholdValue);
+
+    fclose(f);
+}
+
+//FUNCTII PT LOG
+
+void addLogInDistrict(char *filePath, Role_t role, char *userName, char *actionName)
+{
+    FILE *f = fopen(filePath, "a");
+
+    if(f == NULL)
+    {
+        return;
+    }
+
+    char *roleName;
+
+    if(role == inspector)
+    {
+        roleName = "inspector";
+    }
+    else
+    {
+        roleName = "manager";
+    }
+
+    time_t timpCurent = time(NULL);
+
+    char *data = ctime(&timpCurent);
+    
+    data[strlen(data) - 1] = '\0';
+
+    fprintf(f, "%s, %s, %s, %s\n",data,roleName,userName,actionName);
+
+    fclose(f);
 }

@@ -22,5 +22,9 @@ int createFile(char *path,char *filename);
 int createFileWithPermission(char *dirPath,char *fileName,mode_t perm);
 int addNewReport(Role_t role,ReportContent_t *content,char *dirPath,char *fileName);
 ReportContent_t  *createContent(int reportID,char *inspectorName,float latitude,float longitude,char *issue,char *description);
+void printReports(char *filePath);
+void addThresholdInConfig(char *filePath, char *thresholdValue);
+int reportIdExists(char *filePath, int searchedID);
+void addLogInDistrict(char *filePath, Role_t role, char *userName, char *actionName);
 
 #endif
