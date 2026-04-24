@@ -21,6 +21,6 @@ char* findFilePath(char *directoryPath, char *fileName);
 int createFile(char *path,char *filename);
 int createFileWithPermission(char *dirPath,char *fileName,mode_t perm);
 int addNewReport(Role_t role,ReportContent_t *content,char *dirPath,char *fileName);
-ReportContent_t  *createContent(char *inspectorName,float latitude,float longitude,char *issue,char *description);
+ReportContent_t  *createContent(int reportID,char *inspectorName,float latitude,float longitude,char *issue,char *description);
 
 #endif

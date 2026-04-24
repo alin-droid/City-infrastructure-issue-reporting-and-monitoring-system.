@@ -11,44 +11,44 @@
 
 char fileNames[MAX_NUM_OF_FILES][MAX_FILE_NAME_LENGTH] = {"reports.dat","district.cfg","logged_district"};
 
-ReportContent_t *readContentFromFile(const char *filename) {
+ReportContent_t *createContentFromFile(const char *filename , int argc , char *argv[]) {
     FILE *f = fopen(filename, "r");
     if (f == NULL) {
         perror("Eroare la deschiderea fisierului");
         return NULL;
     }
-
-    char inspectorName[100];
+    
+    int id;
     float latitude, longitude;
     char issue[100];
     char description[256];
 
-    if (fgets(inspectorName, sizeof(inspectorName), f) == NULL) {
-        fclose(f);
-        return NULL;
-    }
-    inspectorName[strcspn(inspectorName, "\n")] = 0;
 
-    if (fscanf(f, "%f %f\n", &latitude, &longitude) != 2) {
+    if (fscanf(f, "%d %f %f\n", &id,&latitude, &longitude) != 3) {
         fclose(f);
         return NULL;
     }
+    //printf("%d %f %f\n",id,latitude,longitude);
 
     if (fgets(issue, sizeof(issue), f) == NULL) {
         fclose(f);
         return NULL;
     }
-    issue[strcspn(issue, "\n")] = 0;
+    
+    //printf("%s\n",issue)
 
     if (fgets(description, sizeof(description), f) == NULL) {
         fclose(f);
         return NULL;
+        
     }
-    description[strcspn(description, "\n")] = 0;
+    //printf("%s\n",description);
 
     fclose(f);
-
-    return createContent(inspectorName, latitude, longitude, issue, description);
+    
+    char *user=getUser(argc,argv);
+    //printf("%s",user)
+    return createContent(id,user,latitude, longitude, issue, description);
 }
 
 int main(int argc, char *argv[])
@@ -80,7 +80,11 @@ int main(int argc, char *argv[])
             createFileWithPermission(dirPath, fileNames[1], 0640);
             createFileWithPermission(dirPath, fileNames[2], 0644);
  
-            ReportContent_t *content = readContentFromFile("datePtRaports.txt");
+            ReportContent_t *content =createContentFromFile("datePtRaports.txt",argc,argv);
+            if(content==NULL){
+                printf("content is not rigth!");
+                return -1;
+            }
             addNewReport(role, content, dirPath, fileNames[0]);
             break;
         }

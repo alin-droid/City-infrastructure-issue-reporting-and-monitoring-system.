@@ -131,37 +131,36 @@ int createFile(char *dirPath, char *fileName)
 int createFileWithPermission(char *dirPath, char *fileName, mode_t perm)
 {  
     //verific daca s-a creat
-     createFile(dirPath, fileName);
 
-   
+    if( createFile(dirPath, fileName) == -1)
+        return -1;
+
+    char *filePath = findFilePath(dirPath, fileName);
+
+    if(filePath == NULL)
+        return -1;
+
+    if(chmod(filePath, perm) != 0)
+    {
+        printf("cannot change %s permission!\n", fileName);
+        free(filePath);
+        return -1;
+    }
+
+    free(filePath);
+    return 0;
+}
    //modific cu permisiunea specifica
 
-      char *filePath = findFilePath(dirPath, fileName);
 
-      if(filePath ==NULL)
-         return -1;
-
-      if(chmod(filePath, perm))
-      {
-         printf("cannot change %s permission!", fileName);
-         free(filePath);
-         return -1;
-      }
-
-      // printf("am schimbat permisiunea!");
-
-      free(filePath);
-   return 0;
-}
-
-
- ReportContent_t  *createContent(char *inspectorName,float latitude,float longitude,char *issue,char *description){
+ ReportContent_t  *createContent(int reportID,char *inspectorName,float latitude,float longitude,char *issue,char *description){
 
     ReportContent_t *content=malloc(sizeof(ReportContent_t));
     if(content==NULL){
       fprintf(stderr,"memory cannot be alocated!\n");
       exit(-1);
     }
+    content->reportID=reportID;
     strcpy(content->inspectorName,inspectorName);
     content->latitude=latitude;
     content->longitude=longitude;
@@ -173,42 +172,48 @@ int createFileWithPermission(char *dirPath, char *fileName, mode_t perm)
 
 //char *inspectorName,float latitude,float longitude,char *issue,char *description
 
-int addNewReport(Role_t role,ReportContent_t *content,char *dirPath,char *fileName){
+int addNewReport(Role_t role, ReportContent_t *content, char *dirPath, char *fileName)
+{
+    if(content == NULL)
+        return -1;
 
-   if(fileExists(dirPath)){
-      createFileWithPermission(dirPath, fileName,664);
-   }
-   
-   char *filePath=findFilePath(dirPath,fileName);
-   
-   checkPermissions(role,filePath,fileName);
+    char *filePath = findFilePath(dirPath, fileName);
 
-   FILE *f=fopen(fileName,"ab");
-   if(f==NULL){
-      fprintf(stderr,"cannot open file %s\n",fileName);
-      return -1;
-   }
-   
+    if(filePath == NULL)
+        return -1;
 
-   int len = strlen(content->inspectorName);
+    checkPermissions(role, filePath, fileName);
+
+    FILE *f = fopen(filePath, "ab");
+
+    if(f == NULL)
+    {
+        perror("fopen");
+        free(filePath);
+        return -1;
+    }
+
+    fwrite(&content->reportID, sizeof(int), 1, f);
+
+    int len = strlen(content->inspectorName);
     fwrite(&len, sizeof(int), 1, f);
-    fwrite(content->inspectorName, sizeof(char), len, f);
+    fwrite(content->inspectorName, sizeof(char), len+1, f);
 
-   
     fwrite(&content->latitude, sizeof(float), 1, f);
     fwrite(&content->longitude, sizeof(float), 1, f);
 
-   
     len = strlen(content->issue);
     fwrite(&len, sizeof(int), 1, f);
-    fwrite(content->issue, sizeof(char), len, f);
+    fwrite(content->issue, sizeof(char), len+1, f);
 
-    
     fwrite(&content->time, sizeof(time_t), 1, f);
-
 
     len = strlen(content->description);
     fwrite(&len, sizeof(int), 1, f);
-    fwrite(content->description, sizeof(char), len, f);
+    fwrite(content->description, sizeof(char), len+1, f);
+
+    fclose(f);
+    free(filePath);
+
     return 0;
 }
