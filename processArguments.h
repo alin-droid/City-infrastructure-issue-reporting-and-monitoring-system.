@@ -35,5 +35,6 @@ char *getDistrict(int argc, char *argv[]);
 int getIdReport(int argc,char *argv[]);
 int getThreshold(int argc,char *argv[]);
 int validateArguments(int argc, char *argv[]);
+char **getConditions(int argc,char *argv[]);
 
 #endif

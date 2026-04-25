@@ -47,9 +47,15 @@ int main(int argc, char *argv[])
         case remove_report:
              deleteOperation(role,dirPath,argc,argv);
              break;
+
         case update_threshold:
              updateOperation(role,dirPath,argc,argv);
              break;
+        
+        case filter:
+             filterOperation(role,dirPath,argc,argv);
+             break;
+               
         default:
             printf("Unknown operation\n");
     }

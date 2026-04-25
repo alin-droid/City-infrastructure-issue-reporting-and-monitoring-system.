@@ -3,6 +3,9 @@
 #include<stdlib.h>
 #include "processArguments.h"
 
+
+#define MAX_NUM_OF_CONDITIONS 100
+#define MAX_LENGTH 100
 //comenziile sunt sub forma --role rolul_propiu_zis
 Role_t getRole(int argc, char *argv[]){
     //parcurg vectorul de string-uri de argumente
@@ -98,6 +101,44 @@ int getThreshold(int argc,char *argv[]){
      }
 
     return -1;
+}
+
+
+char **getConditions(int argc,char *argv[])
+{   
+    if(getOperation(argc,argv) != filter)
+        return NULL;
+
+    char **conditions = malloc(MAX_NUM_OF_CONDITIONS*sizeof(char*));
+
+    for(int i=0;i<MAX_NUM_OF_CONDITIONS;i++)
+        conditions[i] = malloc(MAX_LENGTH);
+
+    char *district = getDistrict(argc,argv);
+
+    int poz = -1;
+
+    for(int i=1;i<argc;i++)
+    {
+        if(strcmp(argv[i], district)==0)
+        {
+            poz=i;
+            break;
+        }
+    }
+
+    if(poz==-1)
+        return NULL;
+
+    int k=0;
+
+    for(int i=poz+1;i<argc;i++)
+    {
+        strcpy(conditions[k], argv[i]);
+        k++;
+    }
+
+    return conditions;
 }
 
 //pretty self explenatory 

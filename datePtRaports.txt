@@ -1,79 +1,20 @@
 101 45.7489 21.2087
-Broken Street Light
-Lamp post not working near central park entrance
-
-102 45.7512 21.2234
-Damaged Road
-Large pothole causing traffic problems near main boulevard
-
-103 45.7421 21.2150
-Flooding
-Water accumulation after rain near subway entrance
-
-104 45.7550 21.2001
-Garbage Overflow
-Trash bins full and waste spread on sidewalk
-
-105 45.7605 21.2307
-Broken Traffic Light
-Traffic light stuck on red at major intersection
-
-106 45.7495 21.2112
-Illegal Parking
-Cars blocking pedestrian crossing area
-
-107 45.7410 21.2255
-Graffiti
-Walls covered in graffiti near school building
-
-108 45.7533 21.2199
-Fallen Tree
-Tree branch blocking one traffic lane
-
-109 45.7467 21.2050
-Sewer Problem
-Strong smell and leaking sewage on street corner
-
-110 45.7588 21.2288
-Street Damage
-Cracked pavement dangerous for pedestrians
-
-111 45.7522 21.2141
-Noise Complaint
-Construction noise during nighttime hours
-
-112 45.7449 21.2097
-Water Leak
-Pipe leak visible near residential block
-
-113 45.7398 21.2210
-Broken Bench
-Public bench damaged in city park
-
-114 45.7564 21.2175
-Street Light Failure
-Multiple lamps off on long avenue section
-
-115 45.7480 21.2240
-Road Sign Missing
-Stop sign missing at crossroad
-
-116 45.7507 21.2063
-Animal Hazard
-Stray dogs aggressive near market area
-
-117 45.7435 21.2182
-Blocked Drain
-Drain blocked with leaves and trash
-
-118 45.7591 21.2295
-Damaged Sidewalk
-Broken tiles creating tripping hazard
-
-119 45.7471 21.2124
-Abandoned Vehicle
-Unused car parked for months on public road
-
-120 45.7546 21.2206
-Bus Stop Damage
-Broken shelter glass at bus station
+Pothole on main road
+3
+Large pothole near crosswalk causing traffic issues
+102 45.7550 21.2301
+Broken streetlight
+2
+Lamp not working during night on central avenue
+103 45.7421 21.2144
+Water leakage
+4
+Pipe leakage flooding sidewalk area
+104 45.7605 21.2210
+Garbage overflow
+1
+Trash containers full and waste scattered nearby
+105 45.7512 21.2198
+Damaged traffic sign
+5
+Stop sign bent and partially unreadable after collision

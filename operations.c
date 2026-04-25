@@ -40,6 +40,7 @@ ReportContent_t *createContentFromFile(const char *filename,int argc,char *argv[
     }
 
     int id;
+    int severityLevel;
     float latitude, longitude;
     char issue[100];
     char description[256];
@@ -48,6 +49,11 @@ ReportContent_t *createContentFromFile(const char *filename,int argc,char *argv[
     {
         if(fgets(issue, sizeof(issue), f) == NULL)
         {
+            fclose(f);
+            return NULL;
+        }
+
+        if(fscanf(f,"%d ",&severityLevel)!=1){
             fclose(f);
             return NULL;
         }
@@ -71,7 +77,7 @@ ReportContent_t *createContentFromFile(const char *filename,int argc,char *argv[
 
             char *user = getUser(argc, argv);
             //creez informatia pe care urmeaza sa o pun in fisier
-            return createContent(id, user,latitude,longitude,issue,description);
+            return createContent(id, user,latitude,longitude,issue,severityLevel,description);
         }
     }
 
@@ -207,5 +213,28 @@ int updateOperation(Role_t role,char *dirPath,int argc,char *argv[]){
     insertNewThresold(role,filePaths[1],newTheersold);
 
     addLogInDistrict(filePaths[2],role,getUser(argc,argv),"updateThreshold");
-    return 1;
+    return 0;
+}
+
+int filterOperation(Role_t role,char *dirPath,int argc,char *argv[]){
+    
+     if(role != inspector && role != manager){
+       printf("No allowed roles for fileter\n");
+       return -1;
+    }
+
+     if(dirExists(dirPath)==0){
+        printf("dir doesnt exist!\n");
+        exit(-1);
+    }
+    char filePaths[MAX_NUM_OF_FILES][MAX_FILE_PATH_LENGTH];
+
+    createFilePaths(filePaths, dirPath);
+
+    char **conditions=getConditions(argc,argv);
+
+    filterRaports(filePaths[0], conditions);
+
+    return 0;
+
 }

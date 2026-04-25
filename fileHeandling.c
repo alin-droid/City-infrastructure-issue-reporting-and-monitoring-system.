@@ -20,6 +20,7 @@ struct content{
    float latitude,longitude;
    char issue[SIZE_CATEGORY_ISSUE];
    time_t time;
+   int severityLevel;
    char description[SIZE_LENGTH_DESCRIPTION];
 };
 
@@ -156,7 +157,7 @@ int createFileWithPermission(char *dirPath, char *fileName, mode_t perm)
 
 
 //FUNCTIILE PT REPORTS.DAT
- ReportContent_t  *createContent(int reportID,char *inspectorName,float latitude,float longitude,char *issue,char *description){
+ ReportContent_t  *createContent(int reportID,char *inspectorName,float latitude,float longitude,char *issue,int severityLevel,char *description){
 
     ReportContent_t *content=malloc(sizeof(ReportContent_t));
     if(content==NULL){
@@ -169,6 +170,7 @@ int createFileWithPermission(char *dirPath, char *fileName, mode_t perm)
     content->longitude=longitude;
     strcpy(content->issue,issue);
     content->time=time(NULL);
+    content->severityLevel=severityLevel;
     strcpy(content->description,description);
     return content;
 }
@@ -176,9 +178,10 @@ int createFileWithPermission(char *dirPath, char *fileName, mode_t perm)
 //pt ca am vzt ca folosesc des afisarea asta mi am facut o fucntie
 void printReportContent(ReportContent_t raport){
      printf("ID: %d ", raport.reportID);
-     printf("Inspector: %s ", raport.inspectorName);
-     printf("Issue: %s ", raport.issue);
-     printf("Coords: %.2f %.2f\n", raport.latitude, raport.longitude);
+     printf("Inspector= %s ", raport.inspectorName);
+     printf("Issue= %s ", raport.issue);
+     printf("Coords= %.2f %.2f ", raport.latitude, raport.longitude);
+     printf("Severity Level= %d\n",raport.severityLevel);
 }
 
 //char *inspectorName,float latitude,float longitude,char *issue,char *description
@@ -319,6 +322,10 @@ void printRaport(Role_t role,char *filePath,int id){
      //daca nu afisez un mesaj
 
      printf("please enter a new id because ID=%d cannot be founded",id);
+}
+
+void filterRaports(char *filePath, char **conditions){
+   return;
 }
 
 //FUNCTII PT CONFIG

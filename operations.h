@@ -22,4 +22,6 @@ int deleteOperation(Role_t role,char *dirPath,int argc,char *argv[]);
 
 int updateOperation(Role_t role,char *dirPath,int argc,char *argv[]);
 
+int filterOperation(Role_t role,char *dirPath,int argc,char *argv[]);
+
 #endif
