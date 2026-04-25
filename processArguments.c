@@ -104,7 +104,7 @@ int getThreshold(int argc,char *argv[]){
 }
 
 
-char **getConditions(int argc,char *argv[])
+char **getConditions(int argc,char *argv[],int *numConditions)
 {   
     if(getOperation(argc,argv) != filter)
         return NULL;
@@ -137,6 +137,8 @@ char **getConditions(int argc,char *argv[])
         strcpy(conditions[k], argv[i]);
         k++;
     }
+    
+    *numConditions=k;
 
     return conditions;
 }

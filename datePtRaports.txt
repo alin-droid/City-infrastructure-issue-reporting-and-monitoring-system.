@@ -11,10 +11,11 @@ Water leakage
 4
 Pipe leakage flooding sidewalk area
 104 45.7605 21.2210
-Garbage overflow
+Damaged traffic sign
 1
 Trash containers full and waste scattered nearby
 105 45.7512 21.2198
 Damaged traffic sign
 5
 Stop sign bent and partially unreadable after collision
+

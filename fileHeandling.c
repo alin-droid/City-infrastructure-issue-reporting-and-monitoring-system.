@@ -324,8 +324,130 @@ void printRaport(Role_t role,char *filePath,int id){
      printf("please enter a new id because ID=%d cannot be founded",id);
 }
 
-void filterRaports(char *filePath, char **conditions){
-   return;
+//functia facuta cu ai
+
+int match_condition(ReportContent_t *r,char *condition)
+{   
+    //printf(" %s\n", condition);
+    char field[100];
+    char op[10];
+    char value[256];
+
+    if(sscanf(condition,"%[^:]:%[^:]:%[^:\n]",field,op,value) != 3)
+        return 0;
+
+    if(strcmp(field,"severity") == 0)
+    {
+        int val = atoi(value);
+
+        if(strcmp(op,"==") == 0)
+            return r->severityLevel == val;
+
+        if(strcmp(op,"!=") == 0)
+            return r->severityLevel != val;
+
+        if(strcmp(op,">") == 0)
+            return r->severityLevel > val;
+
+        if(strcmp(op,"<") == 0)
+            return r->severityLevel < val;
+
+        if(strcmp(op,">=") == 0)
+            return r->severityLevel >= val;
+
+        if(strcmp(op,"<=") == 0)
+            return r->severityLevel <= val;
+    }
+
+    if(strcmp(field,"category") == 0)
+    {
+        if(strcmp(op,"==") == 0)
+            return strcmp(r->issue,value) == 0;
+
+        if(strcmp(op,"!=") == 0)
+            return strcmp(r->issue,value) != 0;
+    }
+
+    if(strcmp(field,"inspector") == 0)
+    {
+        if(strcmp(op,"==") == 0)
+            return strcmp(r->inspectorName,value) == 0;
+
+        if(strcmp(op,"!=") == 0)
+            return strcmp(r->inspectorName,value) != 0;
+    }
+
+    if(strcmp(field,"timestamp") == 0)
+    {
+        long val = atol(value);
+
+        if(strcmp(op,"==") == 0)
+            return r->time == val;
+
+        if(strcmp(op,"!=") == 0)
+            return r->time != val;
+
+        if(strcmp(op,">") == 0)
+            return r->time > val;
+
+        if(strcmp(op,"<") == 0)
+            return r->time < val;
+
+        if(strcmp(op,">=") == 0)
+            return r->time >= val;
+
+        if(strcmp(op,"<=") == 0)
+            return r->time <= val;
+    }
+
+    return 0;
+}
+
+
+void filterRaports(char *filePath, char **conditions,int numOfConditions)
+{
+    int fd = open(filePath, O_RDONLY);
+
+    if(fd == -1)
+    {
+        printf("cannot open reports.dat\n");
+        exit(-1);
+    }
+
+    ReportContent_t report;
+
+    int found = 0;
+    
+    //citesc fisierul 
+    while(read(fd, &report, sizeof(ReportContent_t)) == sizeof(ReportContent_t))
+    {   
+        //pt fecare raport verific lista de conditii
+        int ok = 1;
+        //printf("%d\n",numOfConditions);
+        for(int i = 0; i<numOfConditions; i++)
+        {
+            if(match_condition(&report, conditions[i]) == 0)
+            {
+                 ok = 0;
+                 // printf("checking condition: %s\n", conditions[i]);
+                break;
+            }
+        }
+        
+        //daca respecta condtiile le afisez
+        if(ok == 1)
+        {
+            printReportContent(report);
+            found = 1;
+        }
+    }
+
+    if(found == 0)
+    {
+        printf("No reports matching conditions.\n");
+    }
+
+    close(fd);
 }
 
 //FUNCTII PT CONFIG

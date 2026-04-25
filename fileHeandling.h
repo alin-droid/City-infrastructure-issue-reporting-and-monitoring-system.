@@ -29,5 +29,5 @@ void addLogInDistrict(char *filePath, Role_t role, char *userName, char *actionN
 void deleteRaport(Role_t role,char *filePath,int id);
 void printRaport(Role_t role,char *filePath,int id);
 void insertNewThresold(Role_t role,char *filePath,int newThreshold);
-void filterRaports(char *filePath, char **conditions);
+void filterRaports(char *filePath, char **conditions,int numOfCondtions);
 #endif

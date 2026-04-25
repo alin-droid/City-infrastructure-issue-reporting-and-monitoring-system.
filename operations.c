@@ -230,10 +230,11 @@ int filterOperation(Role_t role,char *dirPath,int argc,char *argv[]){
     char filePaths[MAX_NUM_OF_FILES][MAX_FILE_PATH_LENGTH];
 
     createFilePaths(filePaths, dirPath);
-
-    char **conditions=getConditions(argc,argv);
-
-    filterRaports(filePaths[0], conditions);
+     
+    int numConditions;
+    char **conditions=getConditions(argc,argv,&numConditions);
+    
+    filterRaports(filePaths[0],conditions,numConditions);
 
     return 0;
 
