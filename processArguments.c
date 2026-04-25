@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include<stdlib.h>
 #include "processArguments.h"
 
 //comenziile sunt sub forma --role rolul_propiu_zis
@@ -46,6 +47,7 @@ Operation_t getOperation(int argc, char *argv[])
         if(strcmp(argv[i], "--remove_report") == 0) return remove_report;
         if(strcmp(argv[i], "--filter") == 0) return filter;
         if(strcmp(argv[i], "--update_threshold") == 0) return update_threshold;
+        if(strcmp(argv[i], "--view") == 0) return view;
     }
 
     return no_command;
@@ -59,13 +61,29 @@ char *getDistrict(int argc, char *argv[])
            strcmp(argv[i], "--list") == 0 ||
            strcmp(argv[i], "--filter") == 0 ||
            strcmp(argv[i], "--remove_report") == 0 ||
-           strcmp(argv[i], "--update_threshold") == 0)
+           strcmp(argv[i], "--update_threshold") == 0 ||
+           strcmp(argv[i],"--view") ==0
+         )
         {
             return argv[i + 1];
         }
     }
 
     return NULL;
+}
+
+int getIdReport(int argc,char *argv[]){
+    
+     Operation_t op=getOperation(argc,argv);
+     if(op==view){
+        int id=atoi(argv[argc-1]);
+        if(id<=0){
+            printf("argumments error!");
+            exit(-1);
+        }
+        return id;
+     }
+     return -1;
 }
 
 //pretty self explenatory 

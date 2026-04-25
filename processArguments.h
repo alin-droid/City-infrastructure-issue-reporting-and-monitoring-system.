@@ -20,6 +20,7 @@ typedef enum
     no_command,
     add,
     list,
+    view,
     remove_report,
     filter,
     update_threshold
@@ -31,7 +32,7 @@ Operation_t getOperation(int argc, char *argv[]);
 char *getUser(int argc, char *argv[]);
 char *getDistrict(int argc, char *argv[]);
 
-
+int getIdReport(int argc,char *argv[]);
 int validateArguments(int argc, char *argv[]);
 
 #endif

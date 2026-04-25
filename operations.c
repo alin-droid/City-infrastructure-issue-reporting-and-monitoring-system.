@@ -81,9 +81,8 @@ ReportContent_t *createContentFromFile(const char *filename,int argc,char *argv[
 
 //functiia care imi face ioperatiile specifice pt add
 int addOperation(Role_t role, char *dirPath, int argc, char *argv[])
-{
+{   
     char filePaths[MAX_NUM_OF_FILES][MAX_FILE_PATH_LENGTH];
-    
     createDir(dirPath);
     //creez fisierele cu permisiunile dorite
     createFileWithPermission(dirPath, fileNames[0], 0664);
@@ -105,7 +104,7 @@ int addOperation(Role_t role, char *dirPath, int argc, char *argv[])
     addNewReport(role, content, dirPath, fileNames[0]);
     
     //acum adaug threshold in config 
-    addThresholdInConfig(filePaths[1], "4");
+    addThresholdInConfig(role,filePaths[1], "4");
 
     //adaug in log 
     addLogInDistrict(filePaths[2],role,getUser(argc,argv),"add");
@@ -129,10 +128,38 @@ int listOperation(Role_t role,char *dirPath,int argc,char *argv[])
     printPermissionsForFile(filePaths[0], fileNames[0]);
 
     //printez continutul raportului
-    printReports(filePaths[0]);
+    printReports(role,filePaths[0]);
     
     //adaug in log
     addLogInDistrict(filePaths[2],role,getUser(argc,argv),"list");
+
+    return 0;
+}
+
+
+int viewOpereation(Role_t role,char *dirPath,int argc,char *argv[]){
+
+    //este valabil pt amandouaroluri
+    if(role != inspector && role != manager){
+       printf("No allowed roles for view");
+       return -1;
+    }
+
+     if(dirExists(dirPath)==0){
+        printf("dir doesnt exist!\n");
+        exit(-1);
+    }
+    char filePaths[MAX_NUM_OF_FILES][MAX_FILE_PATH_LENGTH];
+
+    createFilePaths(filePaths, dirPath);
+    //gasesc id ul din argument
+    int id=getIdReport(argc,argv);
+    
+    //aplez functia de afisarea a unui raport dupa id
+    printRaport(role,filePaths[0],id);
+    
+    //adaug in log
+    addLogInDistrict(filePaths[2],role,getUser(argc,argv),"view");
 
     return 0;
 }

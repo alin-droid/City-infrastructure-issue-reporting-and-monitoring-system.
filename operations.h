@@ -16,4 +16,6 @@ int addOperation(Role_t role, char *dirPath, int argc, char *argv[]);
 
 int listOperation(Role_t role,char *dirPath,int argc,char *argv[]);
 
+int viewOpereation(Role_t role,char *dirPath,int argc,char *argv[]);
+
 #endif

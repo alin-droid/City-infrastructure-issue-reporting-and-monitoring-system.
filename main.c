@@ -39,6 +39,10 @@ int main(int argc, char *argv[])
         case list:
              listOperation(role,dirPath,argc,argv);
             break;
+        
+        case view:
+             viewOpereation(role,dirPath,argc,argv);
+             break;
 
         default:
             printf("Unknown operation\n");

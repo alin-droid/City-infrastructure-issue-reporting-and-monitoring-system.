@@ -155,7 +155,7 @@ int createFileWithPermission(char *dirPath, char *fileName, mode_t perm)
 
 
 
-   //FUNCTIILE PT REPORTS.DAT
+//FUNCTIILE PT REPORTS.DAT
  ReportContent_t  *createContent(int reportID,char *inspectorName,float latitude,float longitude,char *issue,char *description){
 
     ReportContent_t *content=malloc(sizeof(ReportContent_t));
@@ -173,6 +173,13 @@ int createFileWithPermission(char *dirPath, char *fileName, mode_t perm)
     return content;
 }
 
+//pt ca am vzt ca folosesc des afisarea asta mi am facut o fucntie
+void printReportContent(ReportContent_t raport){
+     printf("ID: %d ", raport.reportID);
+     printf("Inspector: %s ", raport.inspectorName);
+     printf("Issue: %s ", raport.issue);
+     printf("Coords: %.2f %.2f\n", raport.latitude, raport.longitude);
+}
 
 //char *inspectorName,float latitude,float longitude,char *issue,char *description
 
@@ -187,8 +194,8 @@ int addNewReport(Role_t role, ReportContent_t *content, char *dirPath, char *fil
     if(filePath == NULL)
         return -1;
  
-    checkPermissions(role, filePath, fileName);
-    //daca am permisiunea fac adaugarea
+    checkPermissions(role, filePath);
+    //daca am permisiunea de a scrie in fisier
     FILE *f = fopen(filePath, "ab");
 
     if(f == NULL)
@@ -209,8 +216,11 @@ int addNewReport(Role_t role, ReportContent_t *content, char *dirPath, char *fil
 }
 
 
-void printReports(char *filePath)
-{  
+void printReports(Role_t role,char *filePath)
+{    
+   //verific daca am perimisunea de a citi din fisier
+    checkPermissions(role,filePath);
+
     FILE *f = fopen(filePath, "rb");
 
     if (f == NULL)
@@ -239,10 +249,7 @@ void printReports(char *filePath)
 
         found = 1;
 
-        printf("ID: %d ", raport.reportID);
-        printf("Inspector: %s ", raport.inspectorName);
-        printf("Issue: %s ", raport.issue);
-        printf("Coords: %.2f %.2f\n", raport.latitude, raport.longitude);
+        printReportContent(raport);
     }
 
     if (!found)
@@ -267,7 +274,7 @@ int reportIdExists(char *filePath, int searchedID)
         return 0;
 
     ReportContent_t raport;
-
+   
     while(fread(&raport, sizeof(ReportContent_t), 1, f) == 1)
     {
         if(raport.reportID == searchedID)
@@ -281,11 +288,47 @@ int reportIdExists(char *filePath, int searchedID)
     return 0;
 }
 
+void printRaport(Role_t role,char *filePath,int id){
+   
+    //verific daca ma permisiunea de a citi din fisier
+    checkPermissions(role,filePath);
+
+     //daca estisa il afisez
+     if(reportIdExists(filePath,id)==1){
+
+        FILE *f = fopen(filePath, "rb");
+        if(f == NULL){
+           printf("the reports.dat file cannot be opened!\n");
+           return;
+         }
+   
+      ReportContent_t raport;
+
+       while(fread(&raport, sizeof(ReportContent_t), 1, f) == 1){
+
+            if(raport.reportID == id){
+              
+               printReportContent(raport);
+                
+             fclose(f);
+             return;
+           }
+        }
+      fclose(f);
+     }
+     //daca nu afisez un mesaj
+
+     printf("please enter a new id because ID=%d cannot be founded",id);
+}
 
 //FUNCTII PT CONFIG
 
-void addThresholdInConfig(char *filePath, char *thresholdValue)
-{
+void addThresholdInConfig(Role_t role,char *filePath, char *thresholdValue)
+{   
+   //verific daca am permisiunea de a scrie in config
+
+    checkPermissions(role,filePath);
+
     FILE *f = fopen(filePath, "r");
 
     if(f != NULL)
@@ -313,23 +356,24 @@ void addThresholdInConfig(char *filePath, char *thresholdValue)
 
 //FUNCTII PT LOG
 
+//adaug in log la fiecare operatie 
 void addLogInDistrict(char *filePath, Role_t role, char *userName, char *actionName)
-{
+{  
+   //verific daca am permisiunea de a scrie
+   checkPermissions(role,filePath);
+
     FILE *f = fopen(filePath, "a");
 
-    if(f == NULL)
-    {
+    if(f == NULL){
         return;
     }
 
     char *roleName;
 
-    if(role == inspector)
-    {
+    if(role == inspector){
         roleName = "inspector";
     }
-    else
-    {
+    else{
         roleName = "manager";
     }
 

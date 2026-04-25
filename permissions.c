@@ -9,7 +9,12 @@
 #include <time.h>
 
 
-void checkPermissions(Role_t role,char *filePath,char *fileName){
+void checkPermissions(Role_t role,char *filePath){
+    
+    //strrchr imi returneaza pointer la ultima aparitei la caracterul acela
+    char *fileName=strrchr(filePath, '/');
+    //pentru a scapa de /
+    fileName=fileName+1;
     struct stat sb;
     //verific accesul la fisier
     if(stat(filePath, &sb) != 0)
