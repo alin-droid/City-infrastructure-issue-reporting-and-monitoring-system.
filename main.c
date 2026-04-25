@@ -43,6 +43,10 @@ int main(int argc, char *argv[])
         case view:
              viewOpereation(role,dirPath,argc,argv);
              break;
+        
+        case remove_report:
+             deleteOperation(role,dirPath,argc,argv);
+             break;
 
         default:
             printf("Unknown operation\n");

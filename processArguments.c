@@ -75,7 +75,7 @@ char *getDistrict(int argc, char *argv[])
 int getIdReport(int argc,char *argv[]){
     
      Operation_t op=getOperation(argc,argv);
-     if(op==view){
+     if( op==view || op==remove_report){
         int id=atoi(argv[argc-1]);
         if(id<=0){
             printf("argumments error!");

@@ -163,3 +163,26 @@ int viewOpereation(Role_t role,char *dirPath,int argc,char *argv[]){
 
     return 0;
 }
+
+
+int deleteOperation(Role_t role,char *dirPath,int argc,char *argv[]){
+     //doar manager-ul
+    if(role != manager){
+       printf("No allowed roles for view");
+       return -1;
+    }
+
+     if(dirExists(dirPath)==0){
+        printf("dir doesnt exist!\n");
+        exit(-1);
+    }
+    char filePaths[MAX_NUM_OF_FILES][MAX_FILE_PATH_LENGTH];
+
+    createFilePaths(filePaths, dirPath);
+    //gasesc id ul din argument
+    int id=getIdReport(argc,argv);
+
+    deleteRaport(role,filePaths[0],id);
+     addLogInDistrict(filePaths[2],role,getUser(argc,argv),"remove_repot");
+    return 0;
+}

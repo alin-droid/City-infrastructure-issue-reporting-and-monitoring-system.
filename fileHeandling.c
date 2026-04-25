@@ -354,6 +354,83 @@ void addThresholdInConfig(Role_t role,char *filePath, char *thresholdValue)
     fclose(f);
 }
 
+void deleteRaport(Role_t role,char *filePath,int id)
+{
+    // verific daca am permisiunea de scriere/citire
+    checkPermissions(role,filePath);
+
+    // verific daca raportul exista
+    if(reportIdExists(filePath,id)==1)
+    {
+        int fd = open(filePath, O_RDWR);
+
+        if(fd == -1)
+        {
+            printf("file cannot be opened!\n");
+            return;
+        }
+
+        ReportContent_t raport;
+        off_t positionOReportId = -1;
+        off_t currentPosition = 0;
+
+        // citesc fisierul pana gasesc raportul
+        while(read(fd, &raport, sizeof(ReportContent_t)) == sizeof(ReportContent_t))
+        {
+            // am gasit pozitia raportului cautat
+            if(raport.reportID == id)
+            {
+                positionOReportId = currentPosition;
+                break;
+            }
+
+            // dam upgrade la pozitie cu chunk-uri fixe deoarece e fisier binar
+            currentPosition = currentPosition + sizeof(ReportContent_t);
+        }
+
+        // pozitia de unde citesc urmatorul raport
+        off_t initialPosition = positionOReportId + sizeof(ReportContent_t);
+
+        // pozitia unde scriu peste raportul sters
+        off_t finalPosition = positionOReportId;
+
+        // mut toate rapoartele urmatoare cu o pozitie mai in fata
+        while(1)
+        {
+            // mut cursorul unde trebuie sa citesc
+            lseek(fd, initialPosition, SEEK_SET);
+
+            // daca nu mai am ce citi ies din while
+            if(read(fd, &raport, sizeof(ReportContent_t)) != sizeof(ReportContent_t))
+                break;
+
+            // mut cursorul unde trebuie sa scriu
+            lseek(fd, finalPosition, SEEK_SET);
+
+            // scriu raportul cu o pozitie mai in fata
+            write(fd, &raport, sizeof(ReportContent_t));
+
+            // trec la urmatorul raport
+            initialPosition = initialPosition + sizeof(ReportContent_t);
+            finalPosition = finalPosition + sizeof(ReportContent_t);
+        }
+
+        // aflu dimensiunea actuala a fisierului
+        off_t fileSize = lseek(fd, 0, SEEK_END);
+
+        // tai ultimul raport ramas duplicat
+        ftruncate(fd, fileSize - sizeof(ReportContent_t));
+
+        close(fd);
+
+        printf("report with id=%d was deleted!\n", id);
+        return;
+    }
+
+    // daca nu am gasit raportul
+    printf("report cannot be found! nothing is deleted!\n");
+}
+
 //FUNCTII PT LOG
 
 //adaug in log la fiecare operatie 

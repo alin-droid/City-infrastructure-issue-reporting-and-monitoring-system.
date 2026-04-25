@@ -26,7 +26,7 @@ void printReports(Role_t role,char *filePath);
 void addThresholdInConfig(Role_t role,char *filePath, char *thresholdValue);
 int reportIdExists(char *filePath, int searchedID);
 void addLogInDistrict(char *filePath, Role_t role, char *userName, char *actionName);
-
+void deleteRaport(Role_t role,char *filePath,int id);
 void printRaport(Role_t role,char *filePath,int id);
 
 #endif
