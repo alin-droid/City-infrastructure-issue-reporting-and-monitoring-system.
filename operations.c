@@ -168,7 +168,7 @@ int viewOpereation(Role_t role,char *dirPath,int argc,char *argv[]){
 int deleteOperation(Role_t role,char *dirPath,int argc,char *argv[]){
      //doar manager-ul
     if(role != manager){
-       printf("No allowed roles for view");
+       printf("No allowed roles for removing\n");
        return -1;
     }
 
@@ -183,6 +183,29 @@ int deleteOperation(Role_t role,char *dirPath,int argc,char *argv[]){
     int id=getIdReport(argc,argv);
 
     deleteRaport(role,filePaths[0],id);
-     addLogInDistrict(filePaths[2],role,getUser(argc,argv),"remove_repot");
+    addLogInDistrict(filePaths[2],role,getUser(argc,argv),"remove_repot");
     return 0;
+}
+
+
+int updateOperation(Role_t role,char *dirPath,int argc,char *argv[]){
+     if(role != manager){
+       printf("No allowed roles for uptating threshold\n");
+       return -1;
+    }
+
+     if(dirExists(dirPath)==0){
+        printf("dir doesnt exist!\n");
+        exit(-1);
+    }
+    char filePaths[MAX_NUM_OF_FILES][MAX_FILE_PATH_LENGTH];
+
+    createFilePaths(filePaths, dirPath);
+
+    int newTheersold=getThreshold(argc,argv);
+
+    insertNewThresold(role,filePaths[1],newTheersold);
+
+    addLogInDistrict(filePaths[2],role,getUser(argc,argv),"updateThreshold");
+    return 1;
 }

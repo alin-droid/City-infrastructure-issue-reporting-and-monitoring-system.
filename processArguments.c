@@ -86,6 +86,20 @@ int getIdReport(int argc,char *argv[]){
      return -1;
 }
 
+int getThreshold(int argc,char *argv[]){
+    Operation_t op=getOperation(argc,argv);
+    if(op==update_threshold){
+        int newValue=atoi(argv[argc-1]);
+        if(newValue<=0){
+            printf("argumments error!");
+            exit(-1);
+        }
+        return newValue;
+     }
+
+    return -1;
+}
+
 //pretty self explenatory 
 int validateArguments(int argc, char *argv[])
 {   

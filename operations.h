@@ -20,4 +20,6 @@ int viewOpereation(Role_t role,char *dirPath,int argc,char *argv[]);
 
 int deleteOperation(Role_t role,char *dirPath,int argc,char *argv[]);
 
+int updateOperation(Role_t role,char *dirPath,int argc,char *argv[]);
+
 #endif

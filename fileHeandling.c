@@ -354,6 +354,41 @@ void addThresholdInConfig(Role_t role,char *filePath, char *thresholdValue)
     fclose(f);
 }
 
+void insertNewThresold(Role_t role,char *filePath,int newThreshold){
+    //verific permisiunile daca am prmisiunea de scriere si citire 
+     checkPermissions(role,filePath);
+     struct stat sb;
+     //fac partea de verificare ca e fix 0640 ca check permission imi face doar pe role verificarea
+       if(stat(filePath,&sb) != 0)
+      {
+        printf("cannot access district.cfg!\n");
+        return;
+      }
+
+    // verific daca permisiunile sunt exact 640
+      if((sb.st_mode & 0777) != 0640)
+     {
+        printf("permissions are not 640! update refused!\n");
+        return;
+     }
+    //rescriu fisierul
+      FILE *f = fopen(filePath, "w");
+
+    if(f == NULL)
+    {
+        printf("file cannot be opened!\n");
+        return;
+    }
+
+    // rescriu noul threshold
+    fprintf(f, "severity_threshold=%d\n", newThreshold);
+
+    fclose(f);
+
+    printf("threshold updated successfully!\n");
+}
+
+
 void deleteRaport(Role_t role,char *filePath,int id)
 {
     // verific daca am permisiunea de scriere/citire
