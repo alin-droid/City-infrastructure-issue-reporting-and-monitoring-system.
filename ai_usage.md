@@ -1,5 +1,7 @@
 //Prima varianta generata 
 
+//i-am trimis arhiva cu codul sursa de pe git
+//promt: Fa-mi o functie match_condition care primeste un pointer la struct si o conditie de forma field:operator:value si returneaza 1 daca recordul satisface conditia.
 //am folosit claude ai 
 //Am observat dupa 2 rulari ca indiferent de filtru imi da acelasi rezultat (nu facea diferenta intre >= <=)
 //intra pe ramura cu ==
@@ -98,8 +100,10 @@ int match_condition(ReportContent_t *r,char *condition)
 
 //UPDATE: 
 //recitind cerintele proiectului am realizat ca nu i am dat un promt corect si in loc sa fac cele doua functii separate le am implemntat in aceiasi
-
+//promt:
+//separa functia in doua: una parse_condition care primeste stringul field:operator:value si il imparte in cele 3 parti, si una match_condition care primeste partile deja parsate si face comparatia.
 //desi e odar partea asta in match ea trebuia sa fie in parse
     if(sscanf(condition,"%[^:]:%[^:]:%[^:\n]",field,op,value) != 3)
         return 0;
 
+//am inv ca daca nu dai un prompt exact care sa reflecte cerinta, AI-ul face ce i se pare logic dar nu neaparat ce trebuie. A trebuit sa recitesc cerinta si sa reformulez promptul.

@@ -164,5 +164,10 @@ int validateArguments(int argc, char *argv[])
         return 0;
     }
 
+    if(getUser(argc, argv) == NULL){
+        printf("--user argument is missing!\n");
+        return 0;
+    }
+
     return 1;
 }

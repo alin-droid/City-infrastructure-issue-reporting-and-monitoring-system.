@@ -23,41 +23,51 @@ void checkPermissions(Role_t role,char *filePath){
         exit(1);
     }
     //in functie de rol verific permisiunile
-    switch (role){
-                  //verific permisiunile pt fiecare timp de fisier cu ajutorul codurilor din man  ( manager e owner si inspector e group)
-    case manager: if(strcmp(fileName,"reports.dat")==0 || strcmp(fileName,"district.cfg")==0 || strcmp(fileName,"logged_district")==0){
-                    if (!(sb.st_mode & S_IRUSR)) {
+     switch(role){
+        case manager:
+            if(strcmp(fileName,"reports.dat")==0 || strcmp(fileName,"district.cfg")==0 || strcmp(fileName,"logged_district")==0){
+                if(!(sb.st_mode & S_IRUSR)){
                     printf("Manager has no read permission for %s\n", fileName);
                     exit(1);
-                    }
-
-                    if (!(sb.st_mode & S_IWUSR)) {
-                    printf("Manager has no read permission for %s\n", fileName);
-                    exit(1); 
-                    }
                 }
-                break;
+                if(!(sb.st_mode & S_IWUSR)){
+                    printf("Manager has no write permission for %s\n", fileName);
+                    exit(1);
+                }
+            }
+            break;
 
-    case inspector: if(strcmp(fileName,"reports.dat")==0){
-                    if (!(sb.st_mode & S_IRGRP)) {
+        case inspector:
+            if(strcmp(fileName, "reports.dat") == 0){
+                if(!(sb.st_mode & S_IRGRP)){
                     printf("Inspector has no read permission for %s\n", fileName);
                     exit(1);
-                    }
-
-                    if (!(sb.st_mode &  S_IWGRP)) {
-                    printf("Inspector has no read permission for %s\n", fileName);
-                    exit(1); 
-                    }
                 }
-
-                  if(strcmp(fileName,"district.cfg")==0|| strcmp(fileName,"logged_district")==0 ){
-                    if (!(sb.st_mode & S_IRGRP)) {
-                     printf("Inspector has no read permission for %s\n", fileName);
+                if(!(sb.st_mode & S_IWGRP)){
+                    printf("Inspector has no write permission for %s\n", fileName);
                     exit(1);
-                    }
-                } 
-                break;
-       default: break; 
+                }
+            }
+
+            if(strcmp(fileName, "district.cfg") == 0){
+                if(!(sb.st_mode & S_IRGRP)){
+                    printf("Inspector has no read permission for %s\n", fileName);
+                    exit(1);
+                }
+            }
+
+            if(strcmp(fileName, "logged_district") == 0){
+                if(!(sb.st_mode & S_IROTH)){
+                    printf("Inspector has no read permission for %s\n", fileName);
+                    exit(1);
+                }
+                printf("Inspector cannot write to %s\n", fileName);
+                exit(1);
+            }
+            break;
+
+        default:
+            break;
     }
 }
 
@@ -131,7 +141,7 @@ void printPermissionsForFile(char *filePath,char *fileName){
          printf("-");
     }
 
-    if(sb.st_mode & S_IWOTH){
+    if(sb.st_mode & S_IXOTH){
         printf("x");
     }
     else{
