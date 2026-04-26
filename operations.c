@@ -64,7 +64,7 @@ ReportContent_t *createContentFromFile(const char *filename,int argc,char *argv[
             return NULL;
         }
         
-        //prima data cand folosesc asta willing 
+        //prima data cand folosesc asta willingly
         //daca raman \n se afiseaza ff dubios in temrinal
         issue[strcspn(issue, "\n")] = '\0';
         description[strcspn(description, "\n")] = '\0';
@@ -201,6 +201,7 @@ int deleteOperation(Role_t role,char *dirPath,int argc,char *argv[]){
 
 
 int updateOperation(Role_t role,char *dirPath,int argc,char *argv[]){
+    //poate doar managerul
      if(role != manager){
        printf("No allowed roles for uptating threshold\n");
        return -1;
@@ -217,13 +218,15 @@ int updateOperation(Role_t role,char *dirPath,int argc,char *argv[]){
     int newTheersold=getThreshold(argc,argv);
 
     insertNewThresold(role,filePaths[1],newTheersold);
-
+    
+    //adaug in log
     addLogInDistrict(filePaths[2],role,getUser(argc,argv),"updateThreshold");
     return 0;
 }
 
 int filterOperation(Role_t role,char *dirPath,int argc,char *argv[]){
     
+    //pot ambii
      if(role != inspector && role != manager){
        printf("No allowed roles for fileter\n");
        return -1;
@@ -237,6 +240,7 @@ int filterOperation(Role_t role,char *dirPath,int argc,char *argv[]){
 
     createFilePaths(filePaths, dirPath);
      
+    //iau condtitiile . Am ales ca fiecare constie sa fie cate un element din tabloul de string-uri
     int numConditions;
     char **conditions=getConditions(argc,argv,&numConditions);
     

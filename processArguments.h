@@ -32,9 +32,12 @@ Operation_t getOperation(int argc, char *argv[]);
 char *getUser(int argc, char *argv[]);
 char *getDistrict(int argc, char *argv[]);
 
+
+//gettere pt informatile specifice doar anumitor operatii gen numar id report , conditii pt filter
 int getIdReport(int argc,char *argv[]);
 int getThreshold(int argc,char *argv[]);
-int validateArguments(int argc, char *argv[]);
 char **getConditions(int argc,char *argv[],int *numConditions);
 
+
+int validateArguments(int argc, char *argv[]);
 #endif

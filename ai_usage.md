@@ -1,6 +1,9 @@
 //Prima varianta generata 
+
+//am folosit claude ai 
 //Am observat dupa 2 rulari ca indiferent de filtru imi da acelasi rezultat (nu facea diferenta intre >= <=)
 //intra pe ramura cu ==
+
 
 int match_condition(ReportContent_t *r,char *condition)
 {
@@ -81,8 +84,22 @@ int match_condition(ReportContent_t *r,char *condition)
 }
 
 
+
 //dupa mi-a dat implementarea buna .
 
-//A fost un pic bataie de cap deoarece am implement cu biblioteci is atunci mi a fost mai greu sa mi explic structura datelor
+//A fost un pic bataie de cap deoarece am implement cu biblioteci is atunci mi a fost mai greu sa mi explic structura datelor + sa intelegeaga ce trimit ca armunte
+//in bibliotecare care se ocupa de procesarea argumentelor in fucntie de operatia dorinta am fct un getter pt condtii care imi returneaza un tabloul de stringuri fiecare reprezentand un string
+//sub forma field:operator:value 
+//cred ca daca nu as fi gandit logica asta separat ar fi fost extrem de greu ca ai-ul sa intelegea toata structura proiectului meu 
+
 
 //Ar fi fost mai usor sa ma gandesc eu cum sa fac functia si doar sa pun anumite intrebari de implementare.
+
+
+//UPDATE: 
+//recitind cerintele proiectului am realizat ca nu i am dat un promt corect si in loc sa fac cele doua functii separate le am implemntat in aceiasi
+
+//desi e odar partea asta in match ea trebuia sa fie in parse
+    if(sscanf(condition,"%[^:]:%[^:]:%[^:\n]",field,op,value) != 3)
+        return 0;
+

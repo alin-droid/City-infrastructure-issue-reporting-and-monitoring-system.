@@ -75,6 +75,7 @@ char *getDistrict(int argc, char *argv[])
     return NULL;
 }
 
+//in caz de remuve si view folosesc id-ul raportului 
 int getIdReport(int argc,char *argv[]){
     
      Operation_t op=getOperation(argc,argv);
@@ -89,6 +90,7 @@ int getIdReport(int argc,char *argv[]){
      return -1;
 }
 
+//doar in caz de uptdate
 int getThreshold(int argc,char *argv[]){
     Operation_t op=getOperation(argc,argv);
     if(op==update_threshold){
@@ -108,7 +110,8 @@ char **getConditions(int argc,char *argv[],int *numConditions)
 {   
     if(getOperation(argc,argv) != filter)
         return NULL;
-
+    
+    //aloc dinamic
     char **conditions = malloc(MAX_NUM_OF_CONDITIONS*sizeof(char*));
 
     for(int i=0;i<MAX_NUM_OF_CONDITIONS;i++)
@@ -117,6 +120,9 @@ char **getConditions(int argc,char *argv[],int *numConditions)
     char *district = getDistrict(argc,argv);
 
     int poz = -1;
+    
+    //gasesc pozitia de la care incep conditiile
+    //city_manager --role inspector --user bob --filter downtown severity:>=:2 category:==:road . Caut cu strcmp numele districului
 
     for(int i=1;i<argc;i++)
     {
@@ -126,18 +132,18 @@ char **getConditions(int argc,char *argv[],int *numConditions)
             break;
         }
     }
-
+    //daca nu gasesc numele districului inseamna ca argumentele nu sunt ok
     if(poz==-1)
         return NULL;
 
     int k=0;
-
+    //incepo de la prima conditie sa le copiez in tablou
     for(int i=poz+1;i<argc;i++)
     {
         strcpy(conditions[k], argv[i]);
         k++;
     }
-    
+    //pt a le putea parcurge o sa iau si numarul lor
     *numConditions=k;
 
     return conditions;

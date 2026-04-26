@@ -159,6 +159,7 @@ int createFileWithPermission(char *dirPath, char *fileName, mode_t perm)
 
 
 //FUNCTIILE PT REPORTS.DAT
+
  ReportContent_t  *createContent(int reportID,char *inspectorName,float latitude,float longitude,char *issue,int severityLevel,char *description){
 
     ReportContent_t *content=malloc(sizeof(ReportContent_t));
@@ -326,22 +327,47 @@ void printRaport(Role_t role,char *filePath,int id){
      printf("please enter a new id because ID=%d cannot be founded",id);
 }
 
-//functia facuta cu ai
+//functie facuta cu ai . 
+//Am recitit enuntul. Am realizat ca ma dat un promt gresit ai-ului 
+//si imi parse_condition tot in functia match 
 
-int match_condition(ReportContent_t *r,char *condition)
-{   
-    //printf(" %s\n", condition);
-    char field[100];
-    char op[10];
-    char value[256];
+int parse_condition(const char *input,char *field,char *op,char *value)
+{
+    //functie generata cu ajutor ai
+    //primeste conditia completa de forma:
+    //field:operator:value
+    //ex: severity:>=:3
 
-    if(sscanf(condition,"%[^:]:%[^:]:%[^:\n]",field,op,value) != 3)
+    //sscanf sparge textul in 3 bucati separate dupa :
+    //field = severity
+    //op = >=
+    //value = 3
+
+    //daca nu reuseste sa citeasca toate cele 3 componente
+    if(sscanf(input,"%[^:]:%[^:]:%[^:\n]",field,op,value) != 3)
         return 0;
 
+    //conditia a fost parsata corect
+    return 1;
+}
+
+//functia facuta cu ai
+//aceiais dar inlocuirea logicii de parse cu functia in cauza
+
+
+int match_condition(ReportContent_t *r,char *field,char *op,char *value)
+{   
+    //functia generata cu ajutor ai
+    //primeste un raport + campul pe care vreau sa verific + operator + valoarea
+    //daca raportul respecta conditia returneaza 1 altfel 0
+
+    //daca vreau sa verific severity
     if(strcmp(field,"severity") == 0)
-    {
+    {   
+        //transform valoarea primita ca text in int
         int val = atoi(value);
 
+        //compar severitatea raportului in functie de operator
         if(strcmp(op,"==") == 0)
             return r->severityLevel == val;
 
@@ -361,8 +387,10 @@ int match_condition(ReportContent_t *r,char *condition)
             return r->severityLevel <= val;
     }
 
+    //daca verific categoria problemei
     if(strcmp(field,"category") == 0)
     {
+        //la stringuri folosesc strcmp
         if(strcmp(op,"==") == 0)
             return strcmp(r->issue,value) == 0;
 
@@ -370,6 +398,7 @@ int match_condition(ReportContent_t *r,char *condition)
             return strcmp(r->issue,value) != 0;
     }
 
+    //daca verific numele inspectorului
     if(strcmp(field,"inspector") == 0)
     {
         if(strcmp(op,"==") == 0)
@@ -379,8 +408,10 @@ int match_condition(ReportContent_t *r,char *condition)
             return strcmp(r->inspectorName,value) != 0;
     }
 
+    //daca verific timestamp ul
     if(strcmp(field,"timestamp") == 0)
-    {
+    {   
+        //convertesc textul in long
         long val = atol(value);
 
         if(strcmp(op,"==") == 0)
@@ -402,9 +433,9 @@ int match_condition(ReportContent_t *r,char *condition)
             return r->time <= val;
     }
 
+    //daca nu exista campul sau operatorul returnez fals
     return 0;
 }
-
 
 void filterRaports(char *filePath, char **conditions,int numOfConditions)
 {
@@ -425,13 +456,22 @@ void filterRaports(char *filePath, char **conditions,int numOfConditions)
     {   
         //pt fecare raport verific lista de conditii
         int ok = 1;
-        //printf("%d\n",numOfConditions);
+
         for(int i = 0; i<numOfConditions; i++)
         {
-            if(match_condition(&report, conditions[i]) == 0)
+            char field[100];
+            char op[10];
+            char value[256];
+            //imi fac condtiile individual
+            if(parse_condition(conditions[i],field,op,value) == 0)
             {
-                 ok = 0;
-                 // printf("checking condition: %s\n", conditions[i]);
+                ok = 0;
+                break;
+            }
+            //vad daca se potrivesc
+            if(match_condition(&report,field,op,value) == 0)
+            {
+                ok = 0;
                 break;
             }
         }
@@ -451,7 +491,6 @@ void filterRaports(char *filePath, char **conditions,int numOfConditions)
 
     close(fd);
 }
-
 //FUNCTII PT CONFIG
 
 void addThresholdInConfig(Role_t role,char *filePath, char *thresholdValue)
@@ -463,7 +502,7 @@ void addThresholdInConfig(Role_t role,char *filePath, char *thresholdValue)
     FILE *f = fopen(filePath, "r");
 
     if(f != NULL)
-    {   //pt a nu resvrie thresholValue de fiecare data 
+    {   //pt a nu rescrie thresholValue de fiecare data 
         fseek(f, 0, SEEK_END);
 
         if(ftell(f) > 0)
@@ -604,7 +643,8 @@ void addLogInDistrict(char *filePath, Role_t role, char *userName, char *actionN
 {  
    //verific daca am permisiunea de a scrie
    checkPermissions(role,filePath);
-
+    
+   //deschid fisierul si odar scriu informatiile despre log;
     FILE *f = fopen(filePath, "a");
 
     if(f == NULL){
@@ -638,9 +678,11 @@ void createActiveReportsLink(char *districtName, char *reportsPath)
     char linkName[MAX_FILE_PATH_LENGTH];
     
     sprintf(linkName, "active_reports-%s", districtName);
-
+    
+    //daca exista un link anterori il sterg ca sa pot sa l creez din nou
     unlink(linkName);
-
+    
+    //creez link-ul si verific ce se returneaza
     if(symlink(reportsPath, linkName) == -1)
     {
         perror("symlink");
@@ -686,5 +728,4 @@ void checkActiveReportsLinks()
 
     closedir(currentDir);
 }
-
 
