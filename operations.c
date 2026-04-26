@@ -89,7 +89,9 @@ ReportContent_t *createContentFromFile(const char *filename,int argc,char *argv[
 int addOperation(Role_t role, char *dirPath, int argc, char *argv[])
 {   
     char filePaths[MAX_NUM_OF_FILES][MAX_FILE_PATH_LENGTH];
+
     createDir(dirPath);
+
     //creez fisierele cu permisiunile dorite
     createFileWithPermission(dirPath, fileNames[0], 0664);
     createFileWithPermission(dirPath, fileNames[1], 0640);
@@ -97,8 +99,12 @@ int addOperation(Role_t role, char *dirPath, int argc, char *argv[])
 
     createFilePaths(filePaths, dirPath);
 
+    //creez link catre reports.dat
+    createActiveReportsLink(getDistrict(argc,argv), filePaths[0]);
+
     //creez continutul 
-    ReportContent_t *content =createContentFromFile("datePtRaports.txt",argc, argv,filePaths[0]);
+    ReportContent_t *content =
+    createContentFromFile("datePtRaports.txt",argc,argv,filePaths[0]);
 
     if(content == NULL)
     {

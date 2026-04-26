@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include<string.h>
+#include <string.h>
 
 #include "processArguments.h"
 #include "operations.h"
@@ -14,6 +14,9 @@ int main(int argc, char *argv[])
         printf("Invalid arguments!\n");
         return 1;
     }
+
+    //verific daca exista linkuri stricate
+    checkActiveReportsLinks();
     
     //optin informatiile neesare
     Operation_t op = getOperation(argc, argv);

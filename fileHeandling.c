@@ -8,6 +8,8 @@
 #include <fcntl.h>
 #include<time.h>
 #include "permissions.h"
+#include "operations.h"
+#include <dirent.h>
 
 #define SIZE_NAME 10000
 #define SIZE_CATEGORY_ISSUE 100
@@ -628,3 +630,61 @@ void addLogInDistrict(char *filePath, Role_t role, char *userName, char *actionN
 
     fclose(f);
 }
+
+
+
+void createActiveReportsLink(char *districtName, char *reportsPath)
+{
+    char linkName[MAX_FILE_PATH_LENGTH];
+    
+    sprintf(linkName, "active_reports-%s", districtName);
+
+    unlink(linkName);
+
+    if(symlink(reportsPath, linkName) == -1)
+    {
+        perror("symlink");
+        return;
+    }
+}
+
+void checkActiveReportsLinks()
+{   
+    //deschid folderul
+    DIR *currentDir = opendir(".");
+    
+    if(currentDir == NULL)
+    {
+        printf("directory cannot be opened!\n");
+        return;
+    }
+     
+    struct dirent *currentFile;
+    //imi trebe buferul asta pt lstat/stat
+    struct stat fileInfo;
+
+    //citesc ce se afla in dir incepand de la root
+    while((currentFile = readdir(currentDir)) != NULL)
+    {   
+        //in functia de create asa imi incep legaturile cu active_reports-
+        if(strncmp(currentFile->d_name,"active_reports-",15) == 0)
+        {   
+            //daca fisierul  este un ok 
+            if(lstat(currentFile->d_name,&fileInfo) == 0)
+            {   
+                //si daca este un symlink
+                if(S_ISLNK(fileInfo.st_mode))
+                {   
+                    if(stat(currentFile->d_name,&fileInfo) != 0)
+                    {
+                        printf("warning: link is not ok! %s\n", currentFile->d_name);
+                    }
+                }
+            }
+        }
+    }
+
+    closedir(currentDir);
+}
+
+

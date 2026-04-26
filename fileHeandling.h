@@ -30,4 +30,6 @@ void deleteRaport(Role_t role,char *filePath,int id);
 void printRaport(Role_t role,char *filePath,int id);
 void insertNewThresold(Role_t role,char *filePath,int newThreshold);
 void filterRaports(char *filePath, char **conditions,int numOfCondtions);
+void createActiveReportsLink(char *districtName, char *reportsPath);
+void checkActiveReportsLinks();
 #endif
