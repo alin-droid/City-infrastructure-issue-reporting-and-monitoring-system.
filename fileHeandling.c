@@ -10,6 +10,8 @@
 #include "permissions.h"
 #include "operations.h"
 #include <dirent.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
 #define SIZE_NAME 10000
 #define SIZE_CATEGORY_ISSUE 100
@@ -729,8 +731,45 @@ void checkActiveReportsLinks()
     closedir(currentDir);
 }
 
+
 void removeDistrict(Role_t role,char *dirPath,char *district){
+    
+     checkPermissions(role,dirPath);
      
-     printf("sergem %s",district);
+      int pid=fork();
+
+      if(pid<0){
+        printf("error when creating procces for remove!\n");
+        exit(-1);
+      }
+      
+      if(pid==0){
+        
+        //printf("sunt in procesul parinte!\n");
+        char *arguments[]={"rm","-rf",district,NULL};
+
+        execvp("rm",arguments);
+        
+      }
+
+      if(pid>0){
+        //printf("sunt in procesul fiu!\n");
+         int *stat=NULL;
+         if(waitpid(pid,stat,WUNTRACED)==-1){
+            printf("no child has exited\n");
+            exit(-1);
+         }
+        
+       char linkName[MAX_FILE_PATH_LENGTH];
+    
+       sprintf(linkName, "active_reports-%s", district);
+       
+        if(unlink(linkName)){
+         printf("link has been removed!\n");
+        }
+
+      }
+
+     //printf("sergem %s",district);
 
 }
