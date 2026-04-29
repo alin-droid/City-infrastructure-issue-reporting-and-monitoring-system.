@@ -729,3 +729,8 @@ void checkActiveReportsLinks()
     closedir(currentDir);
 }
 
+void removeDistrict(Role_t role,char *dirPath,char *district){
+     
+     printf("sergem %s",district);
+
+}

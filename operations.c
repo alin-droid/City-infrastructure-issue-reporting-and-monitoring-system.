@@ -249,3 +249,24 @@ int filterOperation(Role_t role,char *dirPath,int argc,char *argv[]){
     return 0;
 
 }
+
+int  removeOperation(Role_t role,char *dirPath,int argc,char *argv[]){
+
+    if(role != manager){
+       printf("No allowed roles for fileter\n");
+       return -1;
+    }
+
+     if(dirExists(dirPath)==0){
+        printf("dir doesnt exist!\n");
+        exit(-1);
+    }
+    char filePaths[MAX_NUM_OF_FILES][MAX_FILE_PATH_LENGTH];
+
+    createFilePaths(filePaths, dirPath);
+
+    //gasesc id ul din argument
+    char *district = getDistrict(argc, argv);
+    removeDistrict(role,dirPath,district);
+    return 0;
+}

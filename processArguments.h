@@ -23,7 +23,8 @@ typedef enum
     view,
     remove_report,
     filter,
-    update_threshold
+    update_threshold,
+    remove_district
 } Operation_t;
 
 //gettere pt info din argumente

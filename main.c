@@ -58,6 +58,10 @@ int main(int argc, char *argv[])
         case filter:
              filterOperation(role,dirPath,argc,argv);
              break;
+
+        case remove_district:
+             removeOperation(role,dirPath,argc,argv);
+             break;
                
         default:
             printf("Unknown operation\n");

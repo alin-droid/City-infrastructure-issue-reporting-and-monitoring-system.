@@ -51,6 +51,7 @@ Operation_t getOperation(int argc, char *argv[])
         if(strcmp(argv[i], "--filter") == 0) return filter;
         if(strcmp(argv[i], "--update_threshold") == 0) return update_threshold;
         if(strcmp(argv[i], "--view") == 0) return view;
+         if(strcmp(argv[i], "--remove_district") == 0) return remove_district;
     }
 
     return no_command;
@@ -65,7 +66,8 @@ char *getDistrict(int argc, char *argv[])
            strcmp(argv[i], "--filter") == 0 ||
            strcmp(argv[i], "--remove_report") == 0 ||
            strcmp(argv[i], "--update_threshold") == 0 ||
-           strcmp(argv[i],"--view") ==0
+           strcmp(argv[i],"--view") ==0 ||
+           strcmp(argv[i],"--remove_district")==0
          )
         {
             return argv[i + 1];

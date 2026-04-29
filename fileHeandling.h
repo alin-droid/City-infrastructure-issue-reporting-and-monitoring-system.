@@ -50,4 +50,8 @@ void insertNewThresold(Role_t role,char *filePath,int newThreshold);
 //functii pt log
 void addLogInDistrict(char *filePath, Role_t role, char *userName, char *actionName);
 
+//remove district
+
+void removeDistrict(Role_t role,char *dirPath,char *district);
+
 #endif
