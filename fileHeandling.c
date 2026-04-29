@@ -754,8 +754,8 @@ void removeDistrict(Role_t role,char *dirPath,char *district){
 
       if(pid>0){
         //printf("sunt in procesul fiu!\n");
-         int *stat=NULL;
-         if(waitpid(pid,stat,WUNTRACED)==-1){
+         int stat;
+         if(waitpid(pid,&stat,WUNTRACED)==-1){
             printf("no child has exited\n");
             exit(-1);
          }
