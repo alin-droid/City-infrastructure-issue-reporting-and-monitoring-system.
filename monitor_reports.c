@@ -50,7 +50,7 @@ int main(){
 
   //partea pt sigaction
 
-   struct sigaction act={0};
+   struct sigaction act;
    //pun functia mea de handler
    act.sa_flags = 0;
    act.sa_handler = &handler;

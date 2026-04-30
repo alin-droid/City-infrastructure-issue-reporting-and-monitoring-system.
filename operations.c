@@ -3,6 +3,7 @@
 #include <string.h>
 #include <signal.h>
 #include <unistd.h>
+#include <fcntl.h>
 
 #include "operations.h"
 #include "permissions.h"
@@ -88,7 +89,6 @@ ReportContent_t *createContentFromFile(const char *filename,int argc,char *argv[
     return NULL;
 }
 
-//functiia care imi face ioperatiile specifice pt add
 int addOperation(Role_t role, char *dirPath, int argc, char *argv[])
 {   
     char filePaths[MAX_NUM_OF_FILES][MAX_FILE_PATH_LENGTH];
@@ -117,7 +117,54 @@ int addOperation(Role_t role, char *dirPath, int argc, char *argv[])
     
     //il adaug in reports.dat
     addNewReport(role, content, dirPath, fileNames[0]);
+
+    //deschid logu-ul
+    int f_log = open(filePaths[2], O_WRONLY | O_APPEND);
     
+
+    if(f_log == -1){
+        perror("cannot open log");
+        free(content);
+        return -1;
+    }
+    
+    //deschid monitorul
+    int f_monitor = open(".monitor_pid", O_RDONLY);
+
+    char msgError[] = "Monitor NU a putut fi notificat\n";
+    
+    //daca nu s-a creat fisierul sau nu s-a putut deschide
+    if(f_monitor == -1){
+        write(f_log, msgError, strlen(msgError));
+    } else {
+        
+        //citesc pid-ul
+        char buffer[20];
+        int pidSize = read(f_monitor, buffer, sizeof(buffer)-1);
+        close(f_monitor);
+        
+        //daca nu s-a citit dau mesaj de eroare
+        if(pidSize <= 0){
+            write(f_log, msgError, strlen(msgError));
+        }
+        else{
+            //il transfrom in int
+            buffer[pidSize] = '\0';    
+            int pid = atoi(buffer); 
+            //daca nu am reusit sa dau kill la proces dau mesaj de eroare
+            if(kill(pid, SIGUSR1) == -1){
+                write(f_log, msgError, strlen(msgError));
+            } 
+            else {
+                //daca jung aici totul e ok si afisez ca e safe
+                char msgSucces[] = "Monitor notificat cu succes\n";
+                write(f_log, msgSucces, strlen(msgSucces));
+            }
+        }
+    }
+
+    close(f_log);
+
     //acum adaug threshold in config 
     addThresholdInConfig(role,filePaths[1], "4");
     
