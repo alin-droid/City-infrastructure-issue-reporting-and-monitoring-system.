@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
+#include <unistd.h>
 
 #include "operations.h"
 #include "permissions.h"
 #include "fileHeandling.h"
+
 
 //mi am facut acest tablou de caractere in caz ca pe viitor voi avea si alte fisiere
 char fileNames[MAX_NUM_OF_FILES][MAX_FILE_NAME_LENGTH] ={  "reports.dat","district.cfg","logged_district"};
@@ -117,6 +120,9 @@ int addOperation(Role_t role, char *dirPath, int argc, char *argv[])
     
     //acum adaug threshold in config 
     addThresholdInConfig(role,filePaths[1], "4");
+    
+    //aflam pid-ul procesului actual
+    int pid=getpid();
 
     //adaug in log 
     addLogInDistrict(filePaths[2],role,getUser(argc,argv),"add");
