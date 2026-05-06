@@ -36,8 +36,20 @@ int main(int argc, char *argv[])
     switch(op)
     {
         case add:
-             addOperation(role, dirPath, argc, argv);
-            break;
+             printf("How would you like to add report?:\n");
+             printf("1. read from a file named datePtReports.txt\n");
+             printf("2.read from stdin\n");
+             printf("Choose from those 2.\n");
+             int modalitateCitire;
+             scanf("%d",&modalitateCitire);
+
+             if(modalitateCitire!=1 && modalitateCitire!=2){
+               printf("please enter 1 or 2\n");
+               return 1;
+             }
+
+             addOperation(role, dirPath, argc, argv,modalitateCitire);
+             break;
 
         case list:
              listOperation(role,dirPath,argc,argv);

@@ -89,7 +89,64 @@ ReportContent_t *createContentFromFile(const char *filename,int argc,char *argv[
     return NULL;
 }
 
-int addOperation(Role_t role, char *dirPath, int argc, char *argv[])
+ReportContent_t *createContentFromStdin(int argc, char *argv[], char *reportsPath)
+{
+    int id;
+    int severityLevel;
+    float latitude, longitude;
+    char issue[100];
+    char description[256];
+
+    // Citire ID
+    printf("ID: ");
+    if (scanf("%d", &id) != 1)
+        return NULL;
+
+    // Citire latitudine + longitudine
+    printf("Latitude Longitude: ");
+    if (scanf("%f %f", &latitude, &longitude) != 2)
+        return NULL;
+
+    // Curățare buffer după scanf
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+
+    // Citire issue
+    printf("Issue: ");
+    if (fgets(issue, sizeof(issue), stdin) == NULL)
+        return NULL;
+
+    // Eliminare newline
+    issue[strcspn(issue, "\n")] = '\0';
+
+    // Citire severity
+    printf("Severity level: ");
+    if (scanf("%d", &severityLevel) != 1)
+        return NULL;
+
+    // Curățare buffer din nou
+    while ((c = getchar()) != '\n' && c != EOF);
+
+    // Citire description
+    printf("Description: ");
+    if (fgets(description, sizeof(description), stdin) == NULL)
+        return NULL;
+
+    // Eliminare newline
+    description[strcspn(description, "\n")] = '\0';
+
+    // Verificare ID existent
+    if (reportIdExists(reportsPath, id) != 0)
+    {
+        printf("ID-ul exista deja!\n");
+        return NULL;
+    }
+
+    char *user = getUser(argc, argv);
+    return createContent(id, user, latitude, longitude, issue, severityLevel, description);
+}
+
+int addOperation(Role_t role, char *dirPath, int argc, char *argv[],int modalitateCitire)
 {   
     char filePaths[MAX_NUM_OF_FILES][MAX_FILE_PATH_LENGTH];
 
@@ -104,10 +161,18 @@ int addOperation(Role_t role, char *dirPath, int argc, char *argv[])
 
     //creez link catre reports.dat
     createActiveReportsLink(getDistrict(argc,argv), filePaths[0]);
-
+    
+    ReportContent_t *content=NULL;
     //creez continutul 
-    ReportContent_t *content =
-    createContentFromFile("datePtRaports.txt",argc,argv,filePaths[0]);
+    if(modalitateCitire==1)
+    {
+        content = createContentFromFile("datePtRaports.txt",argc,argv,filePaths[0]);
+    }
+
+    if(modalitateCitire==2)
+    {
+       content = createContentFromStdin(argc, argv, filePaths[0]);
+    }
 
     if(content == NULL)
     {
@@ -168,9 +233,6 @@ int addOperation(Role_t role, char *dirPath, int argc, char *argv[])
     //acum adaug threshold in config 
     addThresholdInConfig(role,filePaths[1], "4");
     
-    //aflam pid-ul procesului actual
-    int pid=getpid();
-
     //adaug in log 
     addLogInDistrict(filePaths[2],role,getUser(argc,argv),"add");
 

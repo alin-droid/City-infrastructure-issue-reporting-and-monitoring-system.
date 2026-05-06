@@ -27,8 +27,8 @@ void handler(int sig) {
 
 int main(){
   
-  // O_CREAT - creeaza
-  // O_WRONLY -write only
+  //O_CREAT - creeaza
+  //O_WRONLY -write only
   //O_TRUNC sterge ce a fost scris
 
   int f= open(".monitor_pid", O_CREAT | O_WRONLY | O_TRUNC, 0644); 

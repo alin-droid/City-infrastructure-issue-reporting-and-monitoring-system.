@@ -12,7 +12,7 @@ extern char fileNames[MAX_NUM_OF_FILES][MAX_FILE_NAME_LENGTH];
 
 ReportContent_t *createContentFromFile(const char *filename,int argc,char *argv[],char *reportsPath);
 
-int addOperation(Role_t role, char *dirPath, int argc, char *argv[]);
+int addOperation(Role_t role, char *dirPath, int argc, char *argv[] , int modalitateCitire);
 
 int listOperation(Role_t role,char *dirPath,int argc,char *argv[]);
 
