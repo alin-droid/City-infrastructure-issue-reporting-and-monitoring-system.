@@ -1,3 +1,4 @@
+Phase 1
 //Prima varianta generata 
 
 //i-am trimis arhiva cu codul sursa de pe git
@@ -107,3 +108,20 @@ int match_condition(ReportContent_t *r,char *condition)
         return 0;
 
 //am inv ca daca nu dai un prompt exact care sa reflecte cerinta, AI-ul face ce i se pare logic dar nu neaparat ce trebuie. A trebuit sa recitesc cerinta si sa reformulez promptul.
+
+
+Phase 2
+
+in general ai-ul a fosst greu de utilizat in scop de generare de cod pt ca lucrez cu biblioteci si este greu sa inteleg tot ce se intampla. Asa ca singurul use a fost la functia de stergere reports pt a mi explica exact cum functioneaza fseek .
+
+am folosite claude + gemini
+
+A fost de ajutor si la sigaction pt ca mi a explicat cum functioneaza in mare
+
+Cel mai utile au fost site-urile
+-geeks for geeks
+-stack overflow
+-man-ul (mai ales bucatile de cod)
+
+Din sursele de mai sus am folosit si bucati de cod modificate .Multe lucruri au fost destul de usor de gasit
+
