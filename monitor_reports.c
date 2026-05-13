@@ -30,11 +30,32 @@ int main(){
   //O_CREAT - creeaza
   //O_WRONLY -write only
   //O_TRUNC sterge ce a fost scris
+  
+  //daca exista .monitor_pid trebuie sa trimit prin pipe un mesaj de eroare si pidul
+  
+   int f=open(".monitor_pid",O_RDONLY);
 
-  int f= open(".monitor_pid", O_CREAT | O_WRONLY | O_TRUNC, 0644); 
+   if(f!=-1){
+    //citesc pidul actual din procesul care ruleaza 
+     char pid[20];
+     int pidSize=read(f,pid,sizeof(pid));
+     
+     //il inchid
+     close(f);
+
+     pid[pidSize]='\0';
+
+     printf("error:monitor is already running with pid %s\n",pid);
+
+     exit(-1);
+
+   }
+
+  f= open(".monitor_pid", O_CREAT | O_WRONLY | O_TRUNC, 0644); 
+  
   
   if(f==-1){
-    printf("cannot acces .monitor_pid\n");
+    printf("error:cannot acces .monitor_pid\n");
     exit(-1);
   }
   
