@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#define MAX 200
 
 void stop_monitor(){
 
@@ -123,6 +124,15 @@ void start_monitor() {
     
 }
 
+
+/*void calculate_scores(char districts[MAX][MAX+1],int numOfdistricts){
+     
+    for(int i=0;i<numOfdistricts;i++){
+        
+    }
+
+}
+*/
 int main(int argc,char *argv[]){
 
     if(argc<2){
@@ -130,22 +140,43 @@ int main(int argc,char *argv[]){
         exit(-1);
     }
 
-    if(strcmp(argv[1],"start_monitor")==0){
+    else if(strcmp(argv[1],"start_monitor")==0){
 
         start_monitor();
 
     }
 
-    if(strcmp(argv[1],"stop_monitor")==0){
+    else if(strcmp(argv[1],"stop_monitor")==0){
 
         stop_monitor();
 
     }
 
-     if(strcmp(argv[1],"calculate_scores")==0){
+    else if(strcmp(argv[1],"calculate_scores")==0){
+        
+        if(argc<3){
+            printf("you have to introduce at least one district!\n");
+        }
 
-        //start_minitor();
+        int numOfDistricts=argc-1;
+        char districts[MAX][MAX+1];
+         
+        int j=2;
 
+        for(int i=0;i<numOfDistricts;i++){
+            strcpy(districts[i],argv[j++]);
+        }
+        
+        /*for(int  i=0;i<numOfDistricts;i++){
+            printf("%s " , districts[i]);
+        }*/
+
+        //calculate_scores(districts,numOfDistricts);
+
+    }
+
+    else {
+        printf("you need to introduce a rigth operation!\n");
     }
 
     return 0;
