@@ -125,14 +125,28 @@ void start_monitor() {
 }
 
 
-/*void calculate_scores(char districts[MAX][MAX+1],int numOfdistricts){
+void calculate_scores(char districts[MAX][MAX+1],int numOfdistricts){
      
     for(int i=0;i<numOfdistricts;i++){
         
+        pid_t scorer=fork();
+
+        if(scorer<0){
+            printf("error at calculate_score from distict:%s\n",districts[i]);
+            exit(-1);
+        }
+
+        if(scorer==0){
+          //copil
+        }
+
+        if(scorer>0){
+          //parinte
+
+        }
     }
 
 }
-*/
 int main(int argc,char *argv[]){
 
     if(argc<2){

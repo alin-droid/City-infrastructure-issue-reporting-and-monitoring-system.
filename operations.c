@@ -97,45 +97,45 @@ ReportContent_t *createContentFromStdin(int argc, char *argv[], char *reportsPat
     char issue[100];
     char description[256];
 
-    // Citire ID
+    // citire ID
     printf("ID: ");
     if (scanf("%d", &id) != 1)
         return NULL;
 
-    // Citire latitudine + longitudine
+    // citire latitudine + longitudine
     printf("Latitude Longitude: ");
     if (scanf("%f %f", &latitude, &longitude) != 2)
         return NULL;
 
-    // Curățare buffer după scanf
+
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 
-    // Citire issue
+    // citire issue
     printf("Issue: ");
     if (fgets(issue, sizeof(issue), stdin) == NULL)
         return NULL;
 
-    // Eliminare newline
+    // eliminare newline
     issue[strcspn(issue, "\n")] = '\0';
 
-    // Citire severity
+    // citire severity
     printf("Severity level: ");
     if (scanf("%d", &severityLevel) != 1)
         return NULL;
 
-    // Curățare buffer din nou
+
     while ((c = getchar()) != '\n' && c != EOF);
 
-    // Citire description
+    // citire description
     printf("Description: ");
     if (fgets(description, sizeof(description), stdin) == NULL)
         return NULL;
 
-    // Eliminare newline
+    // eliminare newline
     description[strcspn(description, "\n")] = '\0';
 
-    // Verificare ID existent
+    // verificare ID existent
     if (reportIdExists(reportsPath, id) != 0)
     {
         printf("ID-ul exista deja!\n");

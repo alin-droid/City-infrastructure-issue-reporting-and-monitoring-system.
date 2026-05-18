@@ -13,20 +13,9 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-#define SIZE_NAME 10000
-#define SIZE_CATEGORY_ISSUE 100
-#define SIZE_LENGTH_DESCRIPTION 100000
+
 // -1 nu e ok 1 facut deja 0 ok !!!!!!! nu uita
 
-struct content{
-   int reportID;
-   char inspectorName[SIZE_NAME];
-   float latitude,longitude;
-   char issue[SIZE_CATEGORY_ISSUE];
-   time_t time;
-   int severityLevel;
-   char description[SIZE_LENGTH_DESCRIPTION];
-};
 
 
 // dacă un director există la calea specificată.
@@ -180,6 +169,20 @@ int createFileWithPermission(char *dirPath, char *fileName, mode_t perm)
     return content;
 }
 
+char *getContentInsepctorName(ReportContent_t raport){
+
+    char *result = malloc(strlen(raport.inspectorName) + 1);
+    if (result == NULL) {
+        printf("memory could not be allocated!\n");
+    }
+    strcpy(result, raport.inspectorName);
+    return result; 
+}
+
+int getContentSeverityLevel(ReportContent_t raport){
+    return raport.severityLevel;
+}
+
 //pt ca am vzt ca folosesc des afisarea asta mi am facut o fucntie
 void printReportContent(ReportContent_t raport){
      printf("ID: %d ", raport.reportID);
@@ -255,7 +258,7 @@ void printReports(Role_t role,char *filePath)
             break;   
         }
 
-        found = 1;
+        found = 1;   
 
         printReportContent(raport);
     }

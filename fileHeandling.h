@@ -6,7 +6,20 @@
 #include <sys/types.h>
 #include "processArguments.h"
 
-typedef struct content ReportContent_t; 
+#define SIZE_NAME 10000
+#define SIZE_CATEGORY_ISSUE 100
+#define SIZE_LENGTH_DESCRIPTION 100000
+
+typedef struct content{
+   int reportID;
+   char inspectorName[SIZE_NAME];
+   float latitude,longitude;
+   char issue[SIZE_CATEGORY_ISSUE];
+   time_t time;
+   int severityLevel;
+   char description[SIZE_LENGTH_DESCRIPTION];
+
+}ReportContent_t; 
 
 //functii pt verificare daca existe fisierele
 int dirExists(char *path);
@@ -37,6 +50,10 @@ int reportIdExists(char *filePath, int searchedID);
 void deleteRaport(Role_t role,char *filePath,int id);
 //filtrare
 void filterRaports(char *filePath, char **conditions,int numOfCondtions);
+
+//getter pt scores
+char *getContentInsepctorName(ReportContent_t raport);
+int getContentSeverityLevel(ReportContent_t raport);
 
 //linkire
 void createActiveReportsLink(char *districtName, char *reportsPath);
