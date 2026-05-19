@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#include <sys/wait.h>
+
 #define MAX 200
 
 void stop_monitor(){
@@ -129,6 +131,16 @@ void calculate_scores(char districts[MAX][MAX+1],int numOfdistricts){
      
     for(int i=0;i<numOfdistricts;i++){
         
+        printf("for the %s district those are the result:\n",districts[i]);
+     
+        int pipefd[2];
+
+        if (pipe(pipefd) < 0) {
+            perror("error creating pipe");
+            exit(-1);
+        }
+
+       
         pid_t scorer=fork();
 
         if(scorer<0){
@@ -136,12 +148,41 @@ void calculate_scores(char districts[MAX][MAX+1],int numOfdistricts){
             exit(-1);
         }
 
+
         if(scorer==0){
           //copil
+          close(pipefd[0]);
+
+          //redirectionez stdout-ul scores in pipe
+          dup2(pipefd[1], STDOUT_FILENO);
+
+          // dupa dup2, nu mai am nevoie de pipefd[1]
+          close(pipefd[1]);
+
+          // inlocuiesc procesul actual cu monitor_reports
+          execl("./scorer", "scorer",districts[i],NULL);
+
+         //ajunge aici doar daca execl esueaza
+         perror("execl failed");
+         exit(-1);
+
         }
 
         if(scorer>0){
           //parinte
+            close(pipefd[1]);
+            char msgFromPipe[256];
+            int msgSize;
+
+            while ((msgSize = read(pipefd[0], msgFromPipe, sizeof(msgFromPipe) - 1)) > 0) {
+
+                msgFromPipe[msgSize] = '\0';
+                printf("%s",msgFromPipe);
+
+            }
+
+            close(pipefd[0]);
+            waitpid(scorer,NULL,0);
 
         }
     }
@@ -172,7 +213,7 @@ int main(int argc,char *argv[]){
             printf("you have to introduce at least one district!\n");
         }
 
-        int numOfDistricts=argc-1;
+        int numOfDistricts=argc-2;
         char districts[MAX][MAX+1];
          
         int j=2;
@@ -185,7 +226,7 @@ int main(int argc,char *argv[]){
             printf("%s " , districts[i]);
         }*/
 
-        //calculate_scores(districts,numOfDistricts);
+        calculate_scores(districts,numOfDistricts);
 
     }
 
