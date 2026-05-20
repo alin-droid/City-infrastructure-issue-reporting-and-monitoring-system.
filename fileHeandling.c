@@ -523,8 +523,14 @@ void addThresholdInConfig(Role_t role,char *filePath, char *thresholdValue)
 
     if(f == NULL)
         return;
+    int threshold=atoi(thresholdValue);
 
-    fprintf(f, "severity_threshold=%s\n", thresholdValue);
+    if(threshold<1 || threshold >3){
+        printf("threshold values is between 1-3");
+        exit(-1);
+    }
+
+    fprintf(f, "severity_threshold=%d\n", threshold);
 
     fclose(f);
 }
@@ -553,6 +559,12 @@ void insertNewThresold(Role_t role,char *filePath,int newThreshold){
     {
         printf("file cannot be opened!\n");
         return;
+    }
+
+
+    if(newThreshold<1 || newThreshold >3){
+        printf("threshold values is between 1-3");
+        exit(-1);
     }
 
     // rescriu noul threshold
@@ -722,7 +734,7 @@ void checkActiveReportsLinks()
                 //si daca este un symlink
                 if(S_ISLNK(fileInfo.st_mode))
                 {   
-                    if(stat(currentFile->d_name,&fileInfo) != 0)
+                    if(stat(currentFile->d_name,&fileInfo) == 0)
                     {
                         printf("warning: link is not ok! %s\n", currentFile->d_name);
                     }

@@ -62,6 +62,12 @@ ReportContent_t *createContentFromFile(const char *filename,int argc,char *argv[
             return NULL;
         }
 
+        if(severityLevel<1 || severityLevel>3) {
+              printf("Severity level between 1-3!\n");
+              fclose(f);
+              return NULL;
+        }
+
         if(fgets(description, sizeof(description), f) == NULL)
         {
             fclose(f);
@@ -124,6 +130,11 @@ ReportContent_t *createContentFromStdin(int argc, char *argv[], char *reportsPat
     if (scanf("%d", &severityLevel) != 1)
         return NULL;
 
+    if(severityLevel<1 || severityLevel>3) {
+        printf("Severity level between 1-3 ! \n");
+        return NULL;
+    }
+
 
     while ((c = getchar()) != '\n' && c != EOF);
 
@@ -176,7 +187,7 @@ int addOperation(Role_t role, char *dirPath, int argc, char *argv[],int modalita
 
     if(content == NULL)
     {
-        printf("No new reports found!\n");
+        printf("The report was invalid for some reason!\n");
         return -1;
     }
     
